@@ -1,6 +1,6 @@
 package com.mycompany.app.controller;
 
-import com.mycompany.app.model.RandomTestEntity;
+import com.mycompany.app.model.Module;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +17,10 @@ public class FirstController {
     }
 
     // to return json object
-    @RequestMapping("/testEntity")
+    @RequestMapping("/module")
     public ResponseEntity<?> testEntity() {
         HttpHeaders resp_headers = new HttpHeaders();
-        RandomTestEntity test = new RandomTestEntity("testing string", 420);
-        return new ResponseEntity<RandomTestEntity>(test, resp_headers, HttpStatus.OK);
+        Module java = new Module(1, "Java avancé", "cours d'algorithmique en java");
+        return new ResponseEntity<Module>(java, resp_headers, HttpStatus.OK);
     }
 }
