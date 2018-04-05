@@ -32,6 +32,13 @@ public class Module implements Serializable {
         this.setDescription(description);
     }
 
+    // used for unit testing
+    public Module(Long id, String name, String description){
+        this.setId(id);
+        this.setName(name);
+        this.setDescription(description);
+    }
+
     public String getDescription() {
         return description;
     }
@@ -50,6 +57,10 @@ public class Module implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
 
