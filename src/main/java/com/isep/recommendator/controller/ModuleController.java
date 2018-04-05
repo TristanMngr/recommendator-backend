@@ -2,17 +2,13 @@ package com.isep.recommendator.controller;
 
 import com.isep.recommendator.model.Module;
 import com.isep.recommendator.repository.ModuleRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/modules")
@@ -39,13 +35,11 @@ public class ModuleController {
 
         HttpHeaders resp_headers = new HttpHeaders();
 
-        try {
-            Module module = moduleRepo.findById(id).get();
+        Optional module = moduleRepo.findById(id);
+        if (module.isPresent())
             return new ResponseEntity<>(module, resp_headers, HttpStatus.OK);
-        } catch (NoSuchElementException e) {
+        else
             return new ResponseEntity<>("no module found with id " + id, resp_headers, HttpStatus.NOT_FOUND);
-        }
-
     }
 
     @PostMapping("")
