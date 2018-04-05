@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="my-app" />
+        <module name="recommendator" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="my-app" target="1.8" />
+      <module name="recommendator" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

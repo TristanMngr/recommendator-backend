@@ -1,4 +1,4 @@
-package com.mycompany.app;
+package com.isep.recommendator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

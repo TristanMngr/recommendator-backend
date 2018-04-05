@@ -1,3 +1,4 @@
-/Users/Thibault/Code/ISEP/recommendator-backend/src/main/java/com/mycompany/app/controller/FirstController.java
-/Users/Thibault/Code/ISEP/recommendator-backend/src/main/java/com/mycompany/app/model/Module.java
-/Users/Thibault/Code/ISEP/recommendator-backend/src/main/java/com/mycompany/app/Application.java
+/Users/Thibault/Code/ISEP/recommendator-backend/src/main/java/com/isep/recommendator/Application.java
+/Users/Thibault/Code/ISEP/recommendator-backend/src/main/java/com/isep/recommendator/model/Module.java
+/Users/Thibault/Code/ISEP/recommendator-backend/src/main/java/com/isep/recommendator/controller/ModuleController.java
+/Users/Thibault/Code/ISEP/recommendator-backend/src/main/java/com/isep/recommendator/repository/ModuleRepository.java

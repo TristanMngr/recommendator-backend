@@ -1,1 +1,4 @@
-com/mycompany/app/model/Module.class
+com/isep/recommendator/model/Module.class
+com/isep/recommendator/Application.class
+com/isep/recommendator/controller/ModuleController.class
+com/isep/recommendator/repository/ModuleRepository.class
