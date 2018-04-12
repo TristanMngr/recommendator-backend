@@ -7,6 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,18 +44,11 @@ public class ModuleController {
             return new ResponseEntity<>("no module found with id " + id, resp_headers, HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("")
-    /*
-    * create a new module
-    *
-    * on defini chaque parametre dans la fonction plutot qu'une Map de parametre pour que la réponse soit adaptée
-    * s'il manque un des champs
-    *
-    * */
-    public ResponseEntity<?> create(@RequestParam("name") String name, @RequestParam String description) {
 
+    @PostMapping("")
+    // create a new module
+    public ResponseEntity<?> create(@Valid Module module) {
         HttpHeaders resp_headers = new HttpHeaders();
-        Module module = new Module(name, description);
         moduleRepo.save(module);
         return new ResponseEntity<>(module, resp_headers, HttpStatus.CREATED);
     }
