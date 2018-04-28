@@ -2,22 +2,27 @@ package com.isep.recommendator.controller;
 
 import com.isep.recommendator.model.Module;
 import com.isep.recommendator.repository.ModuleRepository;
+import com.isep.recommendator.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/modules")
 public class ModuleController {
 
+    private final ModuleRepository moduleRepo;
+    private final ModuleService moduleService;
+
     @Autowired
-    ModuleRepository moduleRepo;
+    public ModuleController(ModuleRepository moduleRepo, ModuleService moduleService){
+        this.moduleRepo = moduleRepo;
+        this.moduleService = moduleService;
+    }
 
 
     @GetMapping("")
@@ -36,12 +41,13 @@ public class ModuleController {
     public ResponseEntity<?> getById(@PathVariable(value = "id") Long id) {
 
         HttpHeaders resp_headers = new HttpHeaders();
+        Module module = moduleService.get(id);
 
-        Optional module = moduleRepo.findById(id);
-        if (module.isPresent())
-            return new ResponseEntity<>(module, resp_headers, HttpStatus.OK);
-        else
-            return new ResponseEntity<>("no module found with id " + id, resp_headers, HttpStatus.NOT_FOUND);
+        ResponseEntity<?> resp = module != null ?
+                new ResponseEntity<>(module, resp_headers, HttpStatus.OK) :
+                new ResponseEntity<>("no module found with id " + id, resp_headers, HttpStatus.NOT_FOUND);
+
+        return resp;
     }
 
 
