@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/modules")
 public class ModuleController {
 
@@ -24,9 +25,8 @@ public class ModuleController {
         this.moduleService = moduleService;
     }
 
-
-    @GetMapping("")
     // get all modules
+    @GetMapping("")
     public ResponseEntity<?> getAll() {
 
         HttpHeaders resp_headers = new HttpHeaders();
