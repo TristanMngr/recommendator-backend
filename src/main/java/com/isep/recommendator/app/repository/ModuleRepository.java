@@ -1,6 +1,6 @@
-package com.isep.recommendator.repository;
+package com.isep.recommendator.app.repository;
 
-import com.isep.recommendator.model.Module;
+import com.isep.recommendator.app.model.Module;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

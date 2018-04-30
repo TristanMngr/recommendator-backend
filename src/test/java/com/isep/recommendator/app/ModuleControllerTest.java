@@ -1,7 +1,7 @@
-package com.isep.recommendator;
+package com.isep.recommendator.app;
 
-import com.isep.recommendator.model.Module;
-import com.isep.recommendator.repository.ModuleRepository;
+import com.isep.recommendator.app.model.Module;
+import com.isep.recommendator.app.repository.ModuleRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
