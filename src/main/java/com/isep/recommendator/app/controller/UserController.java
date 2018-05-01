@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
@@ -28,6 +29,10 @@ public class UserController {
     // create a new user
     public ResponseEntity<?> create(@RequestParam("email") String email, @RequestParam("password") String password) {
         HttpHeaders resp_headers = new HttpHeaders();
+
+        if (userRepo.findByEmail(email) != null)
+            return new ResponseEntity<>("email already used", resp_headers, HttpStatus.BAD_REQUEST);
+
         User user = userService.register(email, password);
         return new ResponseEntity<>(user, resp_headers, HttpStatus.CREATED);
     }

@@ -1,5 +1,6 @@
 package com.isep.recommendator.security.service;
 
+import com.isep.recommendator.app.model.User;
 import com.isep.recommendator.security.config.TokenProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -27,6 +28,15 @@ public class TokenService {
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
                 .compact();
+    }
+
+    public static String buildToken(User user){
+        ArrayList<String> roles = new ArrayList<>();
+        roles.add("USER");
+        if (user.isAdmin())
+            roles.add("ADMIN");
+
+        return buildToken(user.getEmail(), roles);
     }
 
     public static Claims parseToken(String token){

@@ -25,7 +25,11 @@ public class UserService  {
     }
 
     public User register(String email, String password){
-        User user = new User(email, bCryptPasswordEncoder.encode(password), false);
+        return createUser(email, password, false);
+    }
+
+    public User createUser(String email, String password, boolean isAdmin){
+        User user = new User(email, bCryptPasswordEncoder.encode(password), isAdmin);
         userRepo.save(user);
         return user;
     }

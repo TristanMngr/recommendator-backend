@@ -2,28 +2,34 @@ package com.isep.recommendator.app;
 
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.security.config.WebSecurityConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+
 import java.nio.charset.Charset;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = {Application.class, WebSecurityConfig.class})
 @WebAppConfiguration
 public class ModuleControllerTest {
 
@@ -36,15 +42,15 @@ public class ModuleControllerTest {
     @Autowired
     private ModuleRepository moduleRepo;
 
-
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    //TODO generer un token a réutiliser pour les tests :)
 
     @Before
     public void before() {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
+        this.mockMvc = webAppContextSetup(webApplicationContext)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
+                .build();
         this.moduleRepo.deleteAllInBatch();
     }
 
@@ -87,13 +93,15 @@ public class ModuleControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
     // [POST] /modules - all params, successfully created
-    public void postAllParams() throws Exception {
+    public void postAllParams_success() throws Exception {
         String name = "nom du module";
         String description = "description du module";
 
         mockMvc.perform(post("/modules")
                 .contentType(contentType)
+                //.header("Authorization", TOKEN_PREFIX + adminToken)
                 .param("name", name)
                 .param("description", description))
                 .andExpect(status().isCreated())
@@ -107,14 +115,37 @@ public class ModuleControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"USER"})
+    // [POST] /modules - all params, not admin
+    public void postAllParams_forbidden() throws Exception {
+        String name = "nom du module";
+        String description = "description du module";
+
+        mockMvc.perform(post("/modules")
+                .contentType(contentType)
+                //.header("Authorization", TOKEN_PREFIX + userToken)
+                .param("name", name)
+                .param("description", description))
+                .andExpect(status().isForbidden()
+                );
+
+        // la réponse est good, on test maintenant que rien n'a été persist
+        List<Module> modules = moduleRepo.findByName(name);
+        assertTrue("it shouldn't find any module with this name", modules.size() == 0);
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
     // [POST] /modules - missing params, nothing created
     public void postMissingParams() throws Exception {
         String name = "nom du module";
 
         mockMvc.perform(post("/modules")
                 .contentType(contentType)
+                //.header("Authorization", TOKEN_PREFIX + adminToken)
                 .param("name", name))
                 .andExpect(status().isBadRequest());
+        System.out.println(status());
 
         // la réponse est good, on test maintenant que rien n'a été persist
         List<Module> modules = moduleRepo.findByName(name);

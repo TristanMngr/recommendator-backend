@@ -11,8 +11,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "app_user")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(
-        allowGetters = true)
+@JsonIgnoreProperties(allowGetters = true)
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +19,7 @@ public class User implements Serializable {
 
     @NotBlank
     @Email
-    //TODO unique
+    @Column(unique = true)
     private String email;
 
     @NotBlank

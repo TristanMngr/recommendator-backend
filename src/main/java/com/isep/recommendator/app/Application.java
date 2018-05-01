@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-@ComponentScan("com.isep")
+@ComponentScan("com.isep.recommendator")
 public class Application {
 
     @Bean
