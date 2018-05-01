@@ -1,12 +1,13 @@
-package com.isep.recommendator.controller;
+package com.isep.recommendator.app.controller;
 
-import com.isep.recommendator.model.Module;
-import com.isep.recommendator.repository.ModuleRepository;
-import com.isep.recommendator.service.ModuleService;
+import com.isep.recommendator.app.model.Module;
+import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
@@ -39,7 +40,6 @@ public class ModuleController {
     @GetMapping("/{id}")
     // get the module with the given id
     public ResponseEntity<?> getById(@PathVariable(value = "id") Long id) {
-
         HttpHeaders resp_headers = new HttpHeaders();
         Module module = moduleService.get(id);
 
@@ -52,6 +52,7 @@ public class ModuleController {
 
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     // create a new module
     public ResponseEntity<?> create(@Valid Module module) {
         HttpHeaders resp_headers = new HttpHeaders();
