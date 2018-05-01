@@ -1,6 +1,9 @@
-package com.isep.recommendator.security;
+package com.isep.recommendator.security.config;
 
-import com.isep.recommendator.security.CustomUserDetailsService;
+import com.isep.recommendator.security.filter.JWTAuthenticationFilter;
+import com.isep.recommendator.security.filter.JWTAuthorizationFilter;
+import com.isep.recommendator.security.service.CustomUserDetailsService;
+import com.isep.recommendator.security.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,44 +20,31 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String SECRET = "BRUH";
-    private static final long EXPIRATION_TIME = 864_000_000; // 10 days
-
-    public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String HEADER_STRING = "Authorization";
-    public static final String SIGN_UP_URL = "/users/register";
-
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private WebSecurityConfig webSecurityConfig;
+    private TokenService tokenService;
+
+    private static final String SIGN_UP_URL = TokenProperties.getSignUpUrl();
+    private static final String AUTH_URL = TokenProperties.getAuthUrl();
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         // Create the Authentication filter
-        JWTAuthenticationFilter authFilter =
-                new JWTAuthenticationFilter(
+        JWTAuthenticationFilter authFilter = new JWTAuthenticationFilter(
                         authenticationManager(),
                         customUserDetailsService,
-                        webSecurityConfig
-                );
-
-        // Specify the login url handler (default is /login)
-        // this line allows to change it.
-        authFilter.setRequiresAuthenticationRequestMatcher(
-                new AntPathRequestMatcher("/users/auth", "POST")
+                        tokenService
         );
 
-        // Create the Authorization Filter
-        JWTAuthorizationFilter authoFilter =
-                new JWTAuthorizationFilter(
-                        authenticationManager()
-                );
+        // Specify the login url handler (default is /login)
+        authFilter.setRequiresAuthenticationRequestMatcher( new AntPathRequestMatcher(AUTH_URL, "POST"));
 
-        // Inject the configuration Class into the Filter
-        authoFilter.setWebSecurityConfig(webSecurityConfig);
+        // Create the Authorization Filter
+        JWTAuthorizationFilter authoFilter = new JWTAuthorizationFilter(authenticationManager());
 
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.GET).permitAll()
@@ -70,13 +60,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             throws Exception
     {
         auth.userDetailsService(customUserDetailsService);
-    }
-
-    public static String getSecret() {
-        return SECRET;
-    }
-
-    public static long getExpirationTime(){
-        return EXPIRATION_TIME;
     }
 }

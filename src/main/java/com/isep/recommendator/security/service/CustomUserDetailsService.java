@@ -1,4 +1,4 @@
-package com.isep.recommendator.security;
+package com.isep.recommendator.security.service;
 
 import com.isep.recommendator.app.model.User;
 import com.isep.recommendator.app.service.UserService;

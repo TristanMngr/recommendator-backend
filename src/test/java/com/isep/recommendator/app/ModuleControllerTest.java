@@ -40,6 +40,7 @@ public class ModuleControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    //TODO generer un token a réutiliser pour les tests :)
 
     @Before
     public void before() {

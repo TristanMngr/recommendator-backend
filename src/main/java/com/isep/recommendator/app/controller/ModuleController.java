@@ -39,10 +39,8 @@ public class ModuleController {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('USER')")
     // get the module with the given id
-    public ResponseEntity<?> getById(@PathVariable(value = "id") Long id, Principal currentUser) {
-        System.out.println("name " + currentUser.getName());
+    public ResponseEntity<?> getById(@PathVariable(value = "id") Long id) {
         HttpHeaders resp_headers = new HttpHeaders();
         Module module = moduleService.get(id);
 
@@ -50,12 +48,12 @@ public class ModuleController {
                 new ResponseEntity<>(module, resp_headers, HttpStatus.OK) :
                 new ResponseEntity<>("no module found with id " + id, resp_headers, HttpStatus.NOT_FOUND);
 
-//        return new ResponseEntity<>(currentUser.getName(), resp_headers, HttpStatus.OK);
         return resp;
     }
 
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('ADMIN')")
     // create a new module
     public ResponseEntity<?> create(@Valid Module module) {
         HttpHeaders resp_headers = new HttpHeaders();
