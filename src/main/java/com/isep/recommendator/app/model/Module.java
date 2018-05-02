@@ -1,17 +1,11 @@
 package com.isep.recommendator.app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "module")
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(
-        allowGetters = true)
 public class Module implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
