@@ -22,7 +22,7 @@ public class JWTAuthenticationFailureHandler implements AuthenticationFailureHan
             throws IOException, ServletException {
         response.setStatus(401);
         response.setContentType("application/json");
-        HashMap<String, Object> respObject = tokenService.getBadCredentialsResponse();
+        HashMap<String, Object> respObject = tokenService.getBadCredentialsResponse(exception.getMessage());
         String resp = new ObjectMapper().writeValueAsString(respObject);
         response.getWriter().append(resp);
     }

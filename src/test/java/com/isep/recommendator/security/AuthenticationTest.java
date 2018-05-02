@@ -91,4 +91,16 @@ public class AuthenticationTest {
                 .andExpect(jsonPath("$.error", isA(String.class))
                 );
     }
+
+    @Test
+    public void auth_emailNotFound() throws Exception {
+        mockMvc.perform(post(AUTH_URL)
+                .contentType(contentType)
+                .param("email", "bob@email.com"))
+                .andExpect(status().is(401))
+                .andExpect(jsonPath("$.token").doesNotExist())
+                .andExpect(jsonPath("$.error", isA(String.class)))
+                .andExpect(jsonPath("$.message").value("email not found")
+                );
+    }
 }
