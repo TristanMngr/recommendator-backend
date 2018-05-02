@@ -77,6 +77,9 @@ public class TokenService {
     }
 
     public static HashMap<String, Object> getBadCredentialsResponse(String msg){
+        if (msg.equals("Bad credentials"))
+            msg = "invalid password";
+
         HashMap<String, Object> resp = new HashMap<>();
         resp.put("status", 401);
         resp.put("error", "Bad Credentials");
