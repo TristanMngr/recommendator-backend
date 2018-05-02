@@ -76,5 +76,12 @@ public class TokenService {
         return resp;
     }
 
+    public static HashMap<String, Object> getBadCredentialsResponse(){
+        HashMap<String, Object> resp = new HashMap<>();
+        resp.put("status", 401);
+        resp.put("error", "Bad Credentials");
+        return resp;
+    }
+
 
 }

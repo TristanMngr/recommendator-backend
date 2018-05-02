@@ -87,7 +87,8 @@ public class AuthenticationTest {
                 .param("email", email)
                 .param("password", "thisisawrongpassword"))
                 .andExpect(status().is(401))
-                .andExpect(jsonPath("$.token").doesNotExist()
+                .andExpect(jsonPath("$.token").doesNotExist())
+                .andExpect(jsonPath("$.error", isA(String.class))
                 );
     }
 }

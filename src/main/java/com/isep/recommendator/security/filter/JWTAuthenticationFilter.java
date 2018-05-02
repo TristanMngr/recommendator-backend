@@ -3,10 +3,12 @@ package com.isep.recommendator.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isep.recommendator.security.config.TokenProperties;
 import com.isep.recommendator.security.service.CustomUserDetailsService;
+import com.isep.recommendator.security.handler.JWTAuthenticationFailureHandler;
 import com.isep.recommendator.security.service.TokenService;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -36,6 +38,7 @@ public class JWTAuthenticationFilter
     public JWTAuthenticationFilter(
             AuthenticationManager authenticationManager,
             CustomUserDetailsService customUserDetailsService, TokenService tokenService) {
+        super.setAuthenticationFailureHandler(new JWTAuthenticationFailureHandler());
         this.authenticationManager = authenticationManager;
         this.customUserDetailsService = customUserDetailsService;
         this.tokenService = tokenService;
