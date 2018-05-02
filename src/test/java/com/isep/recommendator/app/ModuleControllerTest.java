@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class, WebSecurityConfig.class})
 @WebAppConfiguration

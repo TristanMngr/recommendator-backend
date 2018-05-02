@@ -44,6 +44,7 @@ public class JWTAuthenticationFilter
         this.tokenService = tokenService;
     }
 
+    // (voir issue pour handler)
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
@@ -59,7 +60,6 @@ public class JWTAuthenticationFilter
         );
 
         return authenticationManager.authenticate(token);
-
     }
 
     @Override
