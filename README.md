@@ -1,4 +1,4 @@
-https://circleci.com/gh/:owner/:repo.svg?style=shield&circle-token=:circle-token
+[![Build Status](http://circleci-badges-max.herokuapp.com/img/TristanMngr/recommendator-backend?token=)](https://circleci.com/gh/TristanMngr/recommendator-backend)
 
 # recommendator-backend
 ## INSTALLATION
