@@ -58,8 +58,12 @@ public class JWTAuthenticationFilter
                     password,
                     user.getAuthorities()
         );
+        try {
+            return authenticationManager.authenticate(token);
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("invalid password");
+        }
 
-        return authenticationManager.authenticate(token);
     }
 
     @Override
