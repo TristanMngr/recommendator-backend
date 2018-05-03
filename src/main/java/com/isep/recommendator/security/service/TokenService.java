@@ -76,10 +76,14 @@ public class TokenService {
         return resp;
     }
 
-    public static HashMap<String, Object> getBadCredentialsResponse(){
+    public static HashMap<String, Object> getBadCredentialsResponse(String msg){
+        if (msg.equals("Bad credentials"))
+            msg = "invalid password";
+
         HashMap<String, Object> resp = new HashMap<>();
         resp.put("status", 401);
         resp.put("error", "Bad Credentials");
+        resp.put("message", msg);
         return resp;
     }
 
