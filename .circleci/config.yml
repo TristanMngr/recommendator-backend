@@ -46,8 +46,9 @@ jobs:
 
       # run tests!
       - run:
-        name: Set up DB
-        environment:
-          DATABASE_URL: "postgres://root@localhost:5432/recommendator_test"
-        command: mvn test
+          name: tests
+          environment:
+            DATABASE_URL: "postgres://root@localhost:5432/recommendator_test"
+          command: mvn test
+
 
