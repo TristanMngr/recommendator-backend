@@ -8,12 +8,13 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
+        environment:
+          PG_USER=root
       - image: circleci/postgres:9.6.3-alpine
         environment:
           POSTGRES_USER=root
-          POSTGRES_PASSWORD=''
           POSTGRES_DB=recommendator_test
-        user: root
+
 
 
       # Specify service dependencies here if necessary
@@ -35,8 +36,6 @@ jobs:
           keys:
           - recommendator-backend-{{ checksum "pom.xml" }}
           # fallback to using the latest cache if no exact match is found
-
-      - run: dockerize -wait tcp://127.0.0.1:5432 -timeout 120s
 
       - run: mvn dependency:go-offline
 
