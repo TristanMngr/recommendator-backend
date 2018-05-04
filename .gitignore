@@ -145,5 +145,8 @@ recommendator.iml
 # Sonarlint plugin
 .idea/sonarlint
 
+custom command
+.idea/*
 
 # End of https://www.gitignore.io/api/eclipse,intellij
+
