@@ -36,4 +36,5 @@ public class UserController {
         User user = userService.register(email, password);
         return new ResponseEntity<>(user, resp_headers, HttpStatus.CREATED);
     }
+
 }
