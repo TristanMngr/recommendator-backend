@@ -3,10 +3,15 @@ package com.isep.recommendator.app.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "module")
 public class Module implements Serializable {
+    @OneToMany(mappedBy = "module")
+    private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long module_id;
