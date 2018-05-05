@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class Module implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long module_id;
 
     @NotBlank
     private String name;
@@ -31,7 +31,7 @@ public class Module implements Serializable {
     }
 
     public Long getId() {
-        return id;
+        return module_id;
     }
 
     public String getName() {
@@ -44,10 +44,6 @@ public class Module implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }
 
