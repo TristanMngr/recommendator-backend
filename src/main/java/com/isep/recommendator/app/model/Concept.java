@@ -1,5 +1,8 @@
 package com.isep.recommendator.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
@@ -22,7 +25,8 @@ public class Concept {
             joinColumns = {@JoinColumn(name = "concept_id")},
             inverseJoinColumns = {@JoinColumn(name = "module_id")}
     )
-    private Set<Speciality> modules = new HashSet<>();
+    @JsonBackReference
+    private Set<Module> modules = new HashSet<>();
 
     public Concept() {
     }
@@ -39,7 +43,7 @@ public class Concept {
         return concept_id;
     }
 
-    public Set<Speciality> getModules() {
+    public Set<Module> getModules() {
         return modules;
     }
 
@@ -47,10 +51,6 @@ public class Concept {
         this.name = name;
     }
 
-
-    public void setModules(Set<Speciality> modules) {
-        this.modules = modules;
-    }
 
     public void setId(Long concept_id){
         this.concept_id = concept_id;

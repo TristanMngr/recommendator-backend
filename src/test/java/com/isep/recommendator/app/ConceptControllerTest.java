@@ -106,6 +106,21 @@ public class ConceptControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    // [POST] /concepts - all params, successfully created
+    public void postAllParams_notUnique() throws Exception {
+        String name = "nom du concept";
+        Concept concept = conceptRepo.save(new Concept(name));
+
+        mockMvc.perform(post("/concepts")
+                .contentType(contentType)
+                .param("name", name))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", is("concept with name " + name + " already exist"))
+                );
+    }
+
+    @Test
     @WithMockUser(authorities = {"USER"})
     // [POST] /concepts - all params, not admin
     public void postAllParams_forbidden() throws Exception {
