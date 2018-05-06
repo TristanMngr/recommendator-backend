@@ -1,7 +1,7 @@
 package com.isep.recommendator.app;
 
-import com.isep.recommendator.app.model.Module;
-import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.model.Concept;
+import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.security.config.WebSecurityConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.Charset;
-import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class, WebSecurityConfig.class})
 @WebAppConfiguration
-public class ModuleControllerTest {
+public class ConceptControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -39,7 +38,7 @@ public class ModuleControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ModuleRepository moduleRepo;
+    private ConceptRepository conceptRepo;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -50,101 +49,95 @@ public class ModuleControllerTest {
         this.mockMvc = webAppContextSetup(webApplicationContext)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
-        this.moduleRepo.deleteAllInBatch();
+        this.conceptRepo.deleteAllInBatch();
     }
 
     @Test
-    // [GET] /modules
+    // [GET] /concepts
     public void getAll() throws Exception {
-        Module module = this.moduleRepo.save(new Module("name", "description"));
-        Module module_bis = this.moduleRepo.save(new Module("name2", "description2"));
+        Concept concept = this.conceptRepo.save(new Concept("name"));
+        Concept concept_bis = this.conceptRepo.save(new Concept("name2"));
 
-        mockMvc.perform(get("/modules")
+        mockMvc.perform(get("/concepts")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(module.getId().intValue())))
-                .andExpect(jsonPath("$[0].name", is(module.getName())))
-                .andExpect(jsonPath("$[0].description", is(module.getDescription())))
-                .andExpect(jsonPath("$[1].id", is(module_bis.getId().intValue())))
-                .andExpect(jsonPath("$[1].name", is(module_bis.getName())))
-                .andExpect(jsonPath("$[1].description", is(module_bis.getDescription())));
+                .andExpect(jsonPath("$[0].id", is(concept.getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(concept.getName())))
+                .andExpect(jsonPath("$[1].id", is(concept_bis.getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(concept_bis.getName())));
     }
 
     @Test
-    // [GET] /modules/{id} - no module with this id
-    public void moduleNotFound() throws Exception {
-        mockMvc.perform(get("/modules/1")
+    // [GET] /concepts/{id} - no concept with this id
+    public void conceptNotFound() throws Exception {
+        mockMvc.perform(get("/concepts/1")
                 .contentType(contentType))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    // [GET] /modules/{id} - returning the given module
-    public void getOneModule() throws Exception {
-        Module module = this.moduleRepo.save(new Module("name", "description"));
+    // [GET] /concepts/{id} - returning the given concept
+    public void getOneConcept() throws Exception {
+        Concept concept = this.conceptRepo.save(new Concept("name"));
 
-        mockMvc.perform(get("/modules/"+module.getId())
+        mockMvc.perform(get("/concepts/"+concept.getId())
                 .contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(module.getId().intValue())))
-                .andExpect(jsonPath("$.name", is(module.getName())))
-                .andExpect(jsonPath("$.description", is(module.getDescription())));
+                .andExpect(jsonPath("$.id", is(concept.getId().intValue())))
+                .andExpect(jsonPath("$.name", is(concept.getName())));
     }
 
     @Test
     @WithMockUser(authorities = {"USER" , "ADMIN"})
-    // [POST] /modules - all params, successfully created
+    // [POST] /concepts - all params, successfully created
     public void postAllParams_success() throws Exception {
-        String name = "nom du module";
-        String description = "description du module";
+        String name = "nom du concept";
 
-        mockMvc.perform(post("/modules")
+        mockMvc.perform(post("/concepts")
                 .contentType(contentType)
-                .param("name", name)
-                .param("description", description))
+                .param("name", name))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(name)))
-                .andExpect(jsonPath("$.description", is(description))
+                .andExpect(jsonPath("$.name", is(name))
         );
 
         // la réponse est good, on test maintenant si ça a bien été mis en BDD.
-        List<Module> modules = moduleRepo.findByName(name);
-        assertTrue("it should find a module with this name", modules.size() == 1);
+        Concept concept = conceptRepo.findByName(name);
+        assertTrue("it should find a concept with this name", concept != null);
     }
 
     @Test
     @WithMockUser(authorities = {"USER"})
-    // [POST] /modules - all params, not admin
+    // [POST] /concepts - all params, not admin
     public void postAllParams_forbidden() throws Exception {
-        String name = "nom du module";
-        String description = "description du module";
+        String name = "nom du concept";
+        String description = "description du concept";
 
-        mockMvc.perform(post("/modules")
+        mockMvc.perform(post("/concepts")
                 .contentType(contentType)
+                //.header("Authorization", TOKEN_PREFIX + userToken)
                 .param("name", name)
                 .param("description", description))
                 .andExpect(status().isForbidden()
                 );
 
         // la réponse est good, on test maintenant que rien n'a été persist
-        List<Module> modules = moduleRepo.findByName(name);
-        assertTrue("it shouldn't find any module with this name", modules.size() == 0);
+        Concept concept = conceptRepo.findByName(name);
+        assertTrue("it shouldn't find any concept with this name", concept == null);
     }
 
     @Test
     @WithMockUser(authorities = {"USER" , "ADMIN"})
-    // [POST] /modules - missing params, nothing created
+    // [POST] /concepts - missing params, nothing created
     public void postMissingParams() throws Exception {
-        String name = "nom du module";
+        String name = "nom du concept";
 
-        mockMvc.perform(post("/modules")
-                .contentType(contentType)
-                .param("name", name))
+        mockMvc.perform(post("/concepts")
+                .contentType(contentType))
                 .andExpect(status().isBadRequest());
 
         // la réponse est good, on test maintenant que rien n'a été persist
-        List<Module> modules = moduleRepo.findByName(name);
-        assertTrue("it shouldn't find any module with this name", modules.size() == 0);
+        Concept concept = conceptRepo.findByName(name);
+        assertTrue("it shouldn't find any concept with this name", concept == null);
     }
 
 }

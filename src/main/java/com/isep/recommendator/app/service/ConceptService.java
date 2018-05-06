@@ -1,9 +1,7 @@
 package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.model.Concept;
-import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ConceptRepository;
-import com.isep.recommendator.app.repository.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
