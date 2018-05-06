@@ -110,7 +110,7 @@ public class ConceptControllerTest {
     // [POST] /concepts - all params, successfully created
     public void postAllParams_notUnique() throws Exception {
         String name = "nom du concept";
-        Concept concept = conceptRepo.save(new Concept(name));
+        conceptRepo.save(new Concept(name));
 
         mockMvc.perform(post("/concepts")
                 .contentType(contentType)
