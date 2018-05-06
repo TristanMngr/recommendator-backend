@@ -114,7 +114,6 @@ public class ConceptControllerTest {
 
         mockMvc.perform(post("/concepts")
                 .contentType(contentType)
-                //.header("Authorization", TOKEN_PREFIX + userToken)
                 .param("name", name)
                 .param("description", description))
                 .andExpect(status().isForbidden()
