@@ -22,6 +22,9 @@ public class Module implements Serializable {
     @NotBlank
     private String description;
 
+    @ManyToMany(mappedBy = "modules", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Concept> concepts = new HashSet<>();
+
     public Module(){
 
     }
@@ -61,6 +64,10 @@ public class Module implements Serializable {
 
     public void setId(Long module_id) {
         this.module_id = module_id;
+    }
+
+    public Set<Concept> getConcepts() {
+        return concepts;
     }
 }
 

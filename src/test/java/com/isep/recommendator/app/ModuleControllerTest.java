@@ -141,10 +141,8 @@ public class ModuleControllerTest {
 
         mockMvc.perform(post("/modules")
                 .contentType(contentType)
-                //.header("Authorization", TOKEN_PREFIX + adminToken)
                 .param("name", name))
                 .andExpect(status().isBadRequest());
-        System.out.println(status());
 
         // la réponse est good, on test maintenant que rien n'a été persist
         List<Module> modules = moduleRepo.findByName(name);
