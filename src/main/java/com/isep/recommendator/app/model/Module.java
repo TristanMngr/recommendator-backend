@@ -9,7 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "module")
 public class Module implements Serializable {
-    @OneToMany(mappedBy = "module")
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
     private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
 
     @Id
@@ -35,10 +35,6 @@ public class Module implements Serializable {
         return description;
     }
 
-    public Long getId() {
-        return module_id;
-    }
-
     public String getName() {
         return name;
     }
@@ -49,6 +45,22 @@ public class Module implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<SpecialityModule> getSpecialityModules() {
+        return specialityModules;
+    }
+
+    public void setSpecialityModules(Set<SpecialityModule> specialityModules) {
+        this.specialityModules = specialityModules;
+    }
+
+    public Long getId() {
+        return module_id;
+    }
+
+    public void setId(Long module_id) {
+        this.module_id = module_id;
     }
 }
 
