@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +31,10 @@ public class ModuleService {
             return (Module) module.get();
         else
             return null;
+    }
+
+    public List<Module> getAll(){
+        return moduleRepo.findAll();
     }
 
     public Module addConcept(Module module, Concept concept){

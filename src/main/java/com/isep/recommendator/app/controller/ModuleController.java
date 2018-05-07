@@ -23,13 +23,11 @@ import java.util.List;
 @Api(value="/modules", description="All endpoints about modules")
 public class ModuleController {
 
-    private final ModuleRepository moduleRepo;
     private final ModuleService moduleService;
     private final ConceptService conceptService;
 
     @Autowired
-    public ModuleController(ModuleRepository moduleRepo, ModuleService moduleService, ConceptService conceptService){
-        this.moduleRepo = moduleRepo;
+    public ModuleController(ModuleService moduleService, ConceptService conceptService){
         this.moduleService = moduleService;
         this.conceptService = conceptService;
     }
@@ -42,7 +40,7 @@ public class ModuleController {
     })
     @ResponseStatus(HttpStatus.OK)
     public List<Module> getAll() {
-       return moduleRepo.findAll();
+       return moduleService.getAll();
     }
 
 
