@@ -20,7 +20,7 @@ public class Job {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "job_module",
+            name = "job_speciality",
             joinColumns = {@JoinColumn(name = "job_id")},
             inverseJoinColumns = {@JoinColumn(name = "speciality_id")}
     )

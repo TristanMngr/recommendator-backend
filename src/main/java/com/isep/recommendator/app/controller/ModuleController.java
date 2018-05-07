@@ -1,7 +1,9 @@
 package com.isep.recommendator.app.controller;
 
+import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.service.ConceptService;
 import com.isep.recommendator.app.service.ModuleService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,13 @@ public class ModuleController {
 
     private final ModuleRepository moduleRepo;
     private final ModuleService moduleService;
+    private final ConceptService conceptService;
 
     @Autowired
-    public ModuleController(ModuleRepository moduleRepo, ModuleService moduleService){
+    public ModuleController(ModuleRepository moduleRepo, ModuleService moduleService, ConceptService conceptService){
         this.moduleRepo = moduleRepo;
         this.moduleService = moduleService;
+        this.conceptService = conceptService;
     }
 
 
@@ -65,5 +69,24 @@ public class ModuleController {
         HttpHeaders resp_headers = new HttpHeaders();
         moduleRepo.save(module);
         return new ResponseEntity<>(module, resp_headers, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{id}/concepts")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "add a concept to a module [ADMIN]", notes="should be admin" ,response = Module.class)
+    public ResponseEntity<?> addConcept(@PathVariable(value = "id") Long module_id, @RequestParam("concept_id") Long concept_id) {
+        HttpHeaders resp_headers = new HttpHeaders();
+
+        Module module = moduleService.get(module_id);
+        if (module == null)
+            return new ResponseEntity<>("no module found with id " + module_id, resp_headers, HttpStatus.NOT_FOUND);
+
+        Concept concept = conceptService.get(concept_id);
+        if (concept == null)
+            return new ResponseEntity<>("no concept found with id " + concept_id, resp_headers, HttpStatus.BAD_REQUEST);
+
+        module = moduleService.addConcept(module, concept);
+
+        return new ResponseEntity<>(module, resp_headers, HttpStatus.OK);
     }
 }

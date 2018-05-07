@@ -1,4 +1,4 @@
-package com.isep.recommendator.app.exceptionHandler;
+package com.isep.recommendator.app.handler;
 
 
 import org.springframework.http.HttpStatus;
