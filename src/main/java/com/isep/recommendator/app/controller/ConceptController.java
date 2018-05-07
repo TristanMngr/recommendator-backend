@@ -39,10 +39,6 @@ public class ConceptController {
     @ApiOperation(value = "Get a concept by id [PUBLIC]", response = Concept.class)
     public Concept getById(@PathVariable(value = "id") Long id) {
         Concept concept = conceptService.get(id);
-
-        if (concept == null)
-            throw new ResourceNotFoundException("no concept found with id " + id);
-
         return concept;
     }
 
@@ -53,10 +49,6 @@ public class ConceptController {
     @ResponseStatus(HttpStatus.CREATED)
     public Concept create(@RequestParam("name") String name) throws BadRequestException {
         Concept concept = conceptService.create(name);
-
-        if (concept == null)
-            throw new BadRequestException("concept with name " + name + " already exist");
-
         return concept;
     }
 
@@ -66,9 +58,6 @@ public class ConceptController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable(value = "id") Long id){
         Concept concept = conceptService.get(id);
-        if (concept == null)
-           throw new ResourceNotFoundException("no concept found with id " + id);
-
         conceptService.delete(concept);
         return;
     }
@@ -78,14 +67,7 @@ public class ConceptController {
     @ApiOperation(value = "Update a concept [ADMIN]", notes="should be admin", response = Concept.class)
     public Concept updateById(@PathVariable(value = "id") Long id, @RequestParam("name") String name) throws BadRequestException {
         Concept concept = conceptService.get(id);
-        if (concept == null)
-            throw new ResourceNotFoundException("no concept found with id " + id);
-
         concept = conceptService.update(concept, name);
-
-        if (concept == null)
-            throw new BadRequestException("concept with name " + name + " already exist");
-
         return concept;
     }
 }

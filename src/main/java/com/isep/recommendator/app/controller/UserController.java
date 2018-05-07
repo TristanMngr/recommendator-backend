@@ -26,9 +26,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestParam("email") String email, @RequestParam("password") String password)
     throws BadRequestException {
-        if (userRepo.findByEmail(email) != null)
-            throw new BadRequestException("email not found");
-
         User user = userService.register(email, password);
         return user;
     }

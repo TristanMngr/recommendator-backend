@@ -1,6 +1,7 @@
 package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.handler.CustomValidationException;
+import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ConceptRepository;
@@ -30,7 +31,7 @@ public class ModuleService {
         if (module.isPresent())
             return (Module) module.get();
         else
-            return null;
+            throw new ResourceNotFoundException("no module found with id " + id);
     }
 
     public List<Module> getAll(){

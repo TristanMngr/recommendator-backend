@@ -210,7 +210,7 @@ public class ModuleControllerTest {
         mockMvc.perform(post("/modules/"+module.getId()+"/concepts")
                 .contentType(contentType)
                 .param("concept_id", "420"))
-                .andExpect(status().isBadRequest()
+                .andExpect(status().isNotFound()
                 );
     }
 

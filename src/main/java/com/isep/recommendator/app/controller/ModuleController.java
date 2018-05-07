@@ -49,10 +49,6 @@ public class ModuleController {
     @ResponseStatus(HttpStatus.OK)
     public Module getById(@PathVariable(value = "id") Long id) {
         Module module = moduleService.get(id);
-
-        if (module == null)
-            throw new ResourceNotFoundException("no module found with id " + id);
-
         return module;
     }
 
@@ -70,18 +66,10 @@ public class ModuleController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @ApiOperation(value = "add a concept to a module [ADMIN]", notes="should be admin" ,response = Module.class)
     @ResponseStatus(HttpStatus.OK)
-    public Module addConcept(@PathVariable(value = "id") Long module_id, @RequestParam("concept_id") Long concept_id)
-    throws BadRequestException {
+    public Module addConcept(@PathVariable(value = "id") Long module_id, @RequestParam("concept_id") Long concept_id) {
         Module module = moduleService.get(module_id);
-        if (module == null)
-            throw new ResourceNotFoundException("no module found with id " + module_id);
-
         Concept concept = conceptService.get(concept_id);
-        if (concept == null)
-            throw new BadRequestException("no concept found with id " + concept_id);
-
         module = moduleService.addConcept(module, concept);
-
         return module;
     }
 }
