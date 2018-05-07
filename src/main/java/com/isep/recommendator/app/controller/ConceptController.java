@@ -1,7 +1,6 @@
 package com.isep.recommendator.app.controller;
 
 import com.isep.recommendator.app.handler.BadRequestException;
-import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.service.ConceptService;
 import io.swagger.annotations.Api;
