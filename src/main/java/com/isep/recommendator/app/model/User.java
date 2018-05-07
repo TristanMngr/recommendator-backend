@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long user_id;
 
     @NotBlank
     @Email
@@ -42,5 +42,9 @@ public class User implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    public Long getId() {
+        return user_id;
     }
 }

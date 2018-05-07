@@ -3,13 +3,18 @@ package com.isep.recommendator.app.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "module")
 public class Module implements Serializable {
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
+    private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long module_id;
 
     @NotBlank
     private String name;
@@ -30,10 +35,6 @@ public class Module implements Serializable {
         return description;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
     }
@@ -46,8 +47,20 @@ public class Module implements Serializable {
         this.description = description;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Set<SpecialityModule> getSpecialityModules() {
+        return specialityModules;
+    }
+
+    public void setSpecialityModules(Set<SpecialityModule> specialityModules) {
+        this.specialityModules = specialityModules;
+    }
+
+    public Long getId() {
+        return module_id;
+    }
+
+    public void setId(Long module_id) {
+        this.module_id = module_id;
     }
 }
 
