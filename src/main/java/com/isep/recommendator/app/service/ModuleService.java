@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ConceptRepository;
@@ -7,6 +8,8 @@ import com.isep.recommendator.app.repository.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Service
@@ -33,6 +36,16 @@ public class ModuleService {
         module.getConcepts().add(concept);
         concept.getModules().add(module);
         return moduleRepo.saveAndFlush(module);
+    }
+
+    public Module create(String name, String description){
+        try {
+            @Valid Module user = new Module(name, description);
+            moduleRepo.save(user);
+            return user;
+        } catch (ConstraintViolationException e){
+            throw new CustomValidationException(e);
+        }
     }
 
 }

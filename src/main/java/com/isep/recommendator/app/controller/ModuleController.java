@@ -65,9 +65,8 @@ public class ModuleController {
     @ApiOperation(value = "Create a module [ADMIN]", notes="should be admin" ,response = Module.class)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> create(@RequestParam("name") String name, @RequestParam("description") String description) {
-        @Valid Module module = new Module(name, description);
         HttpHeaders resp_headers = new HttpHeaders();
-        moduleRepo.save(module);
+        Module module = moduleService.create(name, description);
         return new ResponseEntity<>(module, resp_headers, HttpStatus.CREATED);
     }
 
