@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.model.User;
 import com.isep.recommendator.app.repository.UserRepository;
@@ -27,7 +28,10 @@ public class UserService  {
         return userRepo.findByEmail(email);
     }
 
-    public User register(String email, String password){
+    public User register(String email, String password) throws BadRequestException {
+        if (userRepo.findByEmail(email) != null)
+            throw new BadRequestException("email not found");
+
         return createUser(email, password, false);
     }
 

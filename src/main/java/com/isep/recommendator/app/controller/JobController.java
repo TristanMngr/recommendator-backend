@@ -1,7 +1,6 @@
 package com.isep.recommendator.app.controller;
 
 import com.isep.recommendator.app.model.Job;
-import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.JobRepository;
 import com.isep.recommendator.app.service.JobService;
 import io.swagger.annotations.Api;
@@ -9,14 +8,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

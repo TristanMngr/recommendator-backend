@@ -1,6 +1,8 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
+import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +28,16 @@ public class ConceptService {
         if (concept.isPresent())
             return (Concept) concept.get();
         else
-            return null;
+            throw new ResourceNotFoundException("no concept found with id " + id);
     }
 
     public List<Concept> getAll(){
         return conceptRepo.findAll();
     }
 
-    public Concept create(String name){
+    public Concept create(String name) throws BadRequestException{
         if (conceptRepo.findByName(name) != null)
-            return null;
+            throw new BadRequestException("concept with name " + name + " already exist");
 
         try {
             @Valid Concept concept = new Concept(name);
@@ -51,9 +53,9 @@ public class ConceptService {
         conceptRepo.delete(concept);
     }
 
-    public Concept update(Concept concept, String new_name){
+    public Concept update(Concept concept, String new_name) throws BadRequestException{
         if (conceptRepo.findByName(new_name) != null)
-            return null;
+            throw new BadRequestException("concept with name " + new_name + " already exist");
 
         concept.setName(new_name);
         return conceptRepo.save(concept);

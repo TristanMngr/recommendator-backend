@@ -118,8 +118,7 @@ public class ConceptControllerTest {
         mockMvc.perform(post("/concepts")
                 .contentType(contentType)
                 .param("name", name))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", is("concept with name " + name + " already exist"))
+                .andExpect(status().isBadRequest()
                 );
     }
 
