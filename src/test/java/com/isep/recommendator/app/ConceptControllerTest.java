@@ -2,6 +2,7 @@ package com.isep.recommendator.app;
 
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.repository.ConceptRepository;
+import com.isep.recommendator.app.service.ConceptService;
 import com.isep.recommendator.security.config.WebSecurityConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +21,7 @@ import java.nio.charset.Charset;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -40,6 +39,9 @@ public class ConceptControllerTest {
 
     @Autowired
     private ConceptRepository conceptRepo;
+
+    @Autowired
+    private ConceptService conceptService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -190,6 +192,48 @@ public class ConceptControllerTest {
         mockMvc.perform(delete("/concepts/420")
                 .contentType(contentType))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    // [PUT] /concepts/{id} - admin
+    public void updateConcept_OK() throws Exception {
+        String name = "nom du concept";
+        String new_name = "nouveau nom";
+        Concept concept = conceptRepo.save(new Concept(name));
+
+        assertTrue("the db should contain this concept", conceptRepo.findByName(name) != null);
+
+        mockMvc.perform(put("/concepts/"+concept.getId())
+                .contentType(contentType)
+                .param("name", new_name))
+                .andExpect(status().isOk());
+
+        assertTrue("the concept name should have been updated", conceptService.get(concept.getId()).getName().equals(new_name));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    // [PUT] /concepts/{id} - no admin
+    public void updateConcept_forbidden() throws Exception {
+        mockMvc.perform(put("/concepts/1")
+                .contentType(contentType)
+                .param("name", "blabla"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "ADMIN"})
+    // [PUT] /concepts/{id} - no admin
+    public void updateConcept_badRequest() throws Exception {
+        String name = "nom du concept";
+        Concept concept = conceptRepo.save(new Concept(name));
+
+        mockMvc.perform(put("/concepts/1")
+                .contentType(contentType))
+                .andExpect(status().isBadRequest());
+
+        assertTrue("the concept name shouldn't have been updated", conceptService.get(concept.getId()).getName().equals(name));
     }
 
 }

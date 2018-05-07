@@ -45,4 +45,12 @@ public class ConceptService {
         conceptRepo.delete(concept);
     }
 
+    public Concept update(Concept concept, String new_name){
+        if (conceptRepo.findByName(new_name) != null)
+            return null;
+
+        concept.setName(new_name);
+        return conceptRepo.save(concept);
+    }
+
 }

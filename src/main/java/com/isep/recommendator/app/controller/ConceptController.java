@@ -84,4 +84,21 @@ public class ConceptController {
         conceptService.delete(concept);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "Update a concept [ADMIN]", notes="should be admin", response = Concept.class)
+    public ResponseEntity<?> updateById(@PathVariable(value = "id") Long id, @RequestParam("name") String name){
+        HttpHeaders resp_headers = new HttpHeaders();
+
+        Concept concept = conceptService.get(id);
+        if (concept == null)
+            return new ResponseEntity<>("no concept found with id " + id, resp_headers, HttpStatus.NOT_FOUND);
+
+        concept = conceptService.update(concept, name);
+
+        return concept != null ?
+                new ResponseEntity<>(concept, resp_headers, HttpStatus.OK) :
+                new ResponseEntity<>("concept with name " + name + " already exist", resp_headers, HttpStatus.BAD_REQUEST);
+    }
 }
