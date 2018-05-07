@@ -2,6 +2,7 @@ package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.repository.ConceptRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,9 @@ public class ConceptService {
         return conceptRepo.save(concept);
     }
 
-    public Concept save(Concept concept){
-        return conceptRepo.save(concept);
+
+    public void delete(Concept concept){
+        conceptRepo.delete(concept);
     }
 
 }

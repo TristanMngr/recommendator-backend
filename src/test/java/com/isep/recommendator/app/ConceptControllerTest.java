@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -152,6 +153,43 @@ public class ConceptControllerTest {
         // la réponse est good, on test maintenant que rien n'a été persist
         Concept concept = conceptRepo.findByName(name);
         assertTrue("it shouldn't find any concept with this name", concept == null);
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    // [DELETE] /concepts/{id} - admin
+    public void deleteConcept_OK() throws Exception {
+        String name = "nom du concept";
+        Concept concept = conceptRepo.save(new Concept(name));
+
+        assertTrue("the db should contain this concept", conceptRepo.findByName(name) != null);
+
+        mockMvc.perform(delete("/concepts/"+concept.getId())
+                .contentType(contentType))
+                .andExpect(status().isNoContent());
+
+        assertTrue("the db should not contain this concept anymore", conceptRepo.findByName(name) == null);
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    // [DELETE] /concepts/{id} - no admin
+    public void deleteConcept_forbidden() throws Exception {
+        String name = "nom du concept";
+        Concept concept = conceptRepo.save(new Concept(name));
+
+        mockMvc.perform(delete("/concepts/"+concept.getId())
+                .contentType(contentType))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "ADMIN"})
+    // [DELETE] /concepts/{id} - concept not found
+    public void deleteConcept_notFound() throws Exception {
+        mockMvc.perform(delete("/concepts/420")
+                .contentType(contentType))
+                .andExpect(status().isNotFound());
     }
 
 }

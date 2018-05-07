@@ -69,4 +69,19 @@ public class ConceptController {
 
 
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "Delete a concept [ADMIN]", notes="should be admin")
+    public ResponseEntity<?> deleteById(@PathVariable(value = "id") Long id){
+        HttpHeaders resp_headers = new HttpHeaders();
+
+        Concept concept = conceptService.get(id);
+        if (concept == null)
+            return new ResponseEntity<>("no concept found with id " + id, resp_headers, HttpStatus.NOT_FOUND);
+
+        conceptService.delete(concept);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
