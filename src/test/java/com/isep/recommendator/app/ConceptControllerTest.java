@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -118,8 +119,7 @@ public class ConceptControllerTest {
         mockMvc.perform(post("/concepts")
                 .contentType(contentType)
                 .param("name", name))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", is("concept with name " + name + " already exist"))
+                .andExpect(status().isBadRequest()
                 );
     }
 
