@@ -1,11 +1,12 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.repository.ConceptRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +37,13 @@ public class ConceptService {
         if (conceptRepo.findByName(name) != null)
             return null;
 
-        @Valid Concept concept = new Concept(name);
-        return conceptRepo.save(concept);
+        try {
+            @Valid Concept concept = new Concept(name);
+            return conceptRepo.save(concept);
+        } catch (ConstraintViolationException e){
+            throw new CustomValidationException(e);
+        }
+
     }
 
 
