@@ -3,6 +3,7 @@ package com.isep.recommendator.app.controller;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
+import com.isep.recommendator.app.model.SpecialityAndMatchingConceptsList;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import com.isep.recommendator.app.service.ConceptService;
@@ -50,7 +51,7 @@ public class SpecialityController {
             responseContainer = "List")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('USER')")
-    public HashMap<?,?> getSpecialitiesFromConcepts(@PathVariable List<Long> concept_ids){
+    public List<SpecialityAndMatchingConceptsList> getSpecialitiesFromConcepts(@PathVariable List<Long> concept_ids){
     return specialityService.getSpecialitiesByConceptsIdsWithMatching(concept_ids); // TODO trouver les concepts qui sont dans chacune d'elles
     }
 }

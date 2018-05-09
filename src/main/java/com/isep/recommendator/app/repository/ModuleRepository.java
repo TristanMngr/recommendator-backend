@@ -7,8 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface ModuleRepository extends JpaRepository<Module, Long> {
@@ -20,7 +18,7 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
     @Query("SELECT c FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) AND spe.id = :spe_id")
     List<Concept> getConceptBySpeIdAndConceptsIds(@Param("spe_id") Long id , @Param("concept_ids")List<Long> concept_ids);
 
-    @Query("SELECT new com.isep.recommendator.app.model.SpecialityConceptQueryResponse(spe, c) FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) ORDER BY spe.speciality_id")
-    List<SpecialityConceptQueryResponse> getSpecialityAndConceptByConceptIds(@Param("concept_ids")List<Long> concept_ids);
+    @Query("SELECT new com.isep.recommendator.app.model.SpecialityAndConcept(spe, c) FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) ORDER BY spe.speciality_id")
+    List<SpecialityAndConcept> getSpecialityAndConceptByConceptIds(@Param("concept_ids")List<Long> concept_ids);
 
 }

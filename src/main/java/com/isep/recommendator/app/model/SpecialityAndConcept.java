@@ -2,12 +2,12 @@ package com.isep.recommendator.app.model;
 
 import java.util.List;
 
-public class SpecialityConceptQueryResponse {
+public class SpecialityAndConcept {
 
     private Speciality speciality;
     private Concept concept;
 
-    public SpecialityConceptQueryResponse(Speciality speciality, Concept concept){
+    public SpecialityAndConcept(Speciality speciality, Concept concept){
         this.speciality = speciality;
         this.concept = concept;
     }

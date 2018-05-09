@@ -2,12 +2,12 @@ package com.isep.recommendator.app.model;
 
 import java.util.List;
 
-public class SpecialityConceptFormResponse {
+public class SpecialityAndMatchingConceptsList {
 
     private Speciality speciality;
     private List<Concept> matching_concepts;
 
-    public SpecialityConceptFormResponse(Speciality speciality, List<Concept> matching_concepts){
+    public SpecialityAndMatchingConceptsList(Speciality speciality, List<Concept> matching_concepts){
         this.speciality = speciality;
         this.matching_concepts = matching_concepts;
     }
