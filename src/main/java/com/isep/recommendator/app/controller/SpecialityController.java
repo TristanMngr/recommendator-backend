@@ -1,10 +1,7 @@
 package com.isep.recommendator.app.controller;
 
-import com.isep.recommendator.app.model.Concept;
-import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
-import com.isep.recommendator.app.model.SpecialityAndMatchingConceptsList;
-import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsList;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import com.isep.recommendator.app.service.ConceptService;
 import com.isep.recommendator.app.service.SpecialityService;
@@ -52,6 +49,6 @@ public class SpecialityController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('USER')")
     public List<SpecialityAndMatchingConceptsList> getSpecialitiesFromConcepts(@PathVariable List<Long> concept_ids){
-    return specialityService.getSpecialitiesByConceptsIdsWithMatching(concept_ids); // TODO trouver les concepts qui sont dans chacune d'elles
+    return specialityService.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
     }
 }

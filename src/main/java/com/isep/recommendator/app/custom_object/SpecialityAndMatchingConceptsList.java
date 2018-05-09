@@ -1,4 +1,7 @@
-package com.isep.recommendator.app.model;
+package com.isep.recommendator.app.custom_object;
+
+import com.isep.recommendator.app.model.Concept;
+import com.isep.recommendator.app.model.Speciality;
 
 import java.util.List;
 

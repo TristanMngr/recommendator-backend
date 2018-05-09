@@ -2,8 +2,8 @@ package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Speciality;
-import com.isep.recommendator.app.model.SpecialityAndMatchingConceptsList;
-import com.isep.recommendator.app.model.SpecialityAndConcept;
+import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsList;
+import com.isep.recommendator.app.custom_object.SpecialityAndConcept;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
