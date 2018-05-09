@@ -36,20 +36,23 @@ public class SpecialityService {
         HashMap<Long, SpecialityConceptFormResponse> resp = new HashMap<>();
         List<Concept> list_concepts = new ArrayList<>();
         Speciality comparator = null;
-
         List<SpecialityConceptQueryResponse> query_responses = moduleRepo.getSpecialityAndConceptByConceptIds(concept_ids);
+
         for (SpecialityConceptQueryResponse query : query_responses){
             Long id = query.getSpeciality().getId();
+            list_concepts.add(query.getConcept());
 
-            // si c'est une nouvelle spé, on vide la liste des concepts
+            // si c'est une nouvelle spé, on sauvegarde la derniere et on vide la liste des concepts
             if (query.getSpeciality() != comparator){
+                resp.put(id, new SpecialityConceptFormResponse(query.getSpeciality(), list_concepts));
                 list_concepts = new ArrayList<>();
             }
-
-            list_concepts.add(query.getConcept());
-            resp.put(id, new SpecialityConceptFormResponse(query.getSpeciality(), list_concepts));
+            // si on a pas encore sauvegardé la derniere spé, et qu'il s'agit là du dernier element de la liste
+            else if (query.getSpeciality() == comparator && query_responses.indexOf(query) == query_responses.size() -1) {
+                resp.put(id, new SpecialityConceptFormResponse(query.getSpeciality(), list_concepts));
+            }
+            
             comparator = query.getSpeciality();
-
         }
         return resp;
     }
