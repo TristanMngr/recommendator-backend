@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.model.SpecialityConceptFormResponse;
 import com.isep.recommendator.app.repository.ModuleRepository;
@@ -26,13 +27,16 @@ public class SpecialityService {
         return moduleRepo.getSpecialitiesByConceptsIds(concept_ids);
     }
 
+    public SpecialityConceptFormResponse buildSpecialityConceptObject(Speciality speciality, List<Long> concept_ids){
+        List<Concept> concept_list = moduleRepo.getConceptBySpeIdAndConceptsIds(speciality.getId(), concept_ids);
+        return new SpecialityConceptFormResponse(speciality, concept_list);
+    }
+
     public List<SpecialityConceptFormResponse> getSpecialitiesByConceptsIdsWithMatching(List<Long> concept_ids){
         List<SpecialityConceptFormResponse> resp = new ArrayList<>();
         List<Speciality> specialities = moduleRepo.getSpecialitiesByConceptsIds(concept_ids);
         for (Speciality spe : specialities){
-            SpecialityConceptFormResponse object = new SpecialityConceptFormResponse(spe,
-                    moduleRepo.getConceptBySpeIdAndConceptsIds(spe.getId(), concept_ids)
-                    );
+            SpecialityConceptFormResponse object = this.buildSpecialityConceptObject(spe, concept_ids);
             resp.add(object);
         }
         return resp;

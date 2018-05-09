@@ -18,4 +18,7 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
 
     @Query("SELECT spe FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) GROUP BY spe ORDER BY COUNT(c.id)")
     List<Speciality> getSpecialitiesByConceptsIds(@Param("concept_ids")List<Long> concept_ids);
+
+    @Query("SELECT c FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) AND spe.id = :spe_id")
+    List<Concept> getConceptBySpeIdAndConceptsIds(@Param("spe_id") Long id , @Param("concept_ids")List<Long> concept_ids);
 }
