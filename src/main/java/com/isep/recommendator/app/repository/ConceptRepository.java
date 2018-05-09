@@ -14,8 +14,4 @@ import java.util.Optional;
 public interface ConceptRepository extends JpaRepository<Concept, Long> {
 
     Concept findByName(String name);
-
-    @Query("SELECT c.modules FROM Concept c WHERE c.concept_id in (:conceptsids)")
-    List<Module> getModulesByConcepts(@Param("conceptsids")List<Long> conceptsids);
-
 }

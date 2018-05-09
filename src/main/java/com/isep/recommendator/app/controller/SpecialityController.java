@@ -50,7 +50,7 @@ public class SpecialityController {
             responseContainer = "List")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('USER')")
-    public List<?> getSpecialitiesFromConcepts(@PathVariable List<Long> concept_ids){
+    public HashMap<?,?> getSpecialitiesFromConcepts(@PathVariable List<Long> concept_ids){
     return specialityService.getSpecialitiesByConceptsIdsWithMatching(concept_ids); // TODO trouver les concepts qui sont dans chacune d'elles
     }
 }
