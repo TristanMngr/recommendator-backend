@@ -1,7 +1,6 @@
 package com.isep.recommendator.app.controller;
 
 import com.isep.recommendator.app.model.Speciality;
-import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsList;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import com.isep.recommendator.app.service.ConceptService;
 import com.isep.recommendator.app.service.SpecialityService;
@@ -11,10 +10,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/specialities")
@@ -40,15 +41,5 @@ public class SpecialityController {
     @ResponseStatus(HttpStatus.OK)
     public List<Speciality> getAll() {
         return specialityRepository.findAll();
-    }
-
-    @GetMapping("/{concept_ids}/concepts")
-    @ApiOperation( value = "[FORM] Get an ordered list of speciality from a list of concepts [USER]",
-            response=Speciality.class,
-            responseContainer = "List")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('USER')")
-    public List<SpecialityAndMatchingConceptsList> getSpecialitiesFromConcepts(@PathVariable List<Long> concept_ids){
-    return specialityService.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
     }
 }

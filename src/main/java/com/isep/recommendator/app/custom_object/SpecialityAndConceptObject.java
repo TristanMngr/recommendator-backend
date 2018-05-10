@@ -5,12 +5,12 @@ import com.isep.recommendator.app.model.Speciality;
 
 import java.util.List;
 
-public class SpecialityAndConcept {
+public class SpecialityAndConceptObject {
 
     private Speciality speciality;
     private Concept concept;
 
-    public SpecialityAndConcept(Speciality speciality, Concept concept){
+    public SpecialityAndConceptObject(Speciality speciality, Concept concept){
         this.speciality = speciality;
         this.concept = concept;
     }
