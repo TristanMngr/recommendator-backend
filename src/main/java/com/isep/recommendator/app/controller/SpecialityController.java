@@ -2,7 +2,6 @@ package com.isep.recommendator.app.controller;
 
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.SpecialityRepository;
-import com.isep.recommendator.app.service.ConceptService;
 import com.isep.recommendator.app.service.SpecialityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,14 +22,11 @@ import java.util.List;
 public class SpecialityController {
     private SpecialityRepository specialityRepository;
     private SpecialityService specialityService;
-    private ConceptService conceptService;
 
     @Autowired
-    public SpecialityController(SpecialityRepository specialityRepository, SpecialityService specialityService,
-                                ConceptService conceptService) {
+    public SpecialityController(SpecialityRepository specialityRepository, SpecialityService specialityService) {
         this.specialityRepository = specialityRepository;
         this.specialityService = specialityService;
-        this.conceptService = conceptService;
     }
 
     @GetMapping("")
