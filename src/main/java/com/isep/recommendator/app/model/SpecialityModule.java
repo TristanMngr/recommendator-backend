@@ -1,7 +1,6 @@
 package com.isep.recommendator.app.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name="speciality_module")
