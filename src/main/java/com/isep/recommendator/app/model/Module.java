@@ -24,7 +24,7 @@ public class Module implements Serializable {
     @NotBlank
     private String description;
 
-    @ManyToMany(mappedBy = "modules", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch= FetchType.EAGER, mappedBy = "modules", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonManagedReference
     private Set<Concept> concepts = new HashSet<>();
 

@@ -18,7 +18,7 @@ public class Concept {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "concept_module",
             joinColumns = {@JoinColumn(name = "concept_id")},
