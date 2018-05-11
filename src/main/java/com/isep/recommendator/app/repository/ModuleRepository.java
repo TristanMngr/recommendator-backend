@@ -1,7 +1,6 @@
 package com.isep.recommendator.app.repository;
 
 import com.isep.recommendator.app.custom_object.SpecialityAndConceptObject;
-import com.isep.recommendator.app.model.*;
 import com.isep.recommendator.app.model.Module;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
