@@ -3,7 +3,6 @@ package com.isep.recommendator.app.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "speciality_module",

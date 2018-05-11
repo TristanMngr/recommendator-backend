@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -60,6 +59,7 @@ public class FormService {
         return response;
     }
 
+    // sort a list of SpecialityAndMatchingConcepts object, based on the number of matching concepts
     private void sortSpecialities(List<SpecialityAndMatchingConceptsObject> list){
         Collections.sort(list, (first, second) -> {
             if (first.getMatching_concepts().size() > second.getMatching_concepts().size())
