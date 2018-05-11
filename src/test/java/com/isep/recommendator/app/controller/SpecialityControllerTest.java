@@ -1,5 +1,6 @@
-package com.isep.recommendator.app;
+package com.isep.recommendator.app.controller;
 
+import com.isep.recommendator.app.Application;
 import com.isep.recommendator.app.model.Job;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
