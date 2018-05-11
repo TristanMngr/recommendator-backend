@@ -9,6 +9,7 @@ import com.isep.recommendator.app.repository.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
@@ -39,9 +40,9 @@ public class ModuleService {
     }
 
     public Module addConcept(Module module, Concept concept){
-        module.getConcepts().add(concept);
         concept.getModules().add(module);
-        return moduleRepo.saveAndFlush(module);
+        module.getConcepts().add(concept);
+        return moduleRepo.save(module);
     }
 
     public Module create(String name, String description){
