@@ -1,6 +1,7 @@
 package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.Application;
+import com.isep.recommendator.app.custom_object.SpecialityAndConceptObject;
 import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
@@ -40,12 +41,55 @@ public class FormServiceTest {
     ModuleRepository moduleRepository;
     @Autowired
     SpecialityRepository specialityRepository;
+    @Autowired
+    SpecialityService specialityService;
+
+    private Concept concept_one;
+    private Concept concept_two;
+
+    private Module module_one;
+    private Module module_two;
+
+    private Speciality spe_one;
+    private Speciality spe_two;
+    private Speciality spe_three;
 
     @Before
     public void before(){
+        this.clean();
+        this.initDB();
+        this.makeLinks();
+    }
+
+    private void clean(){
         moduleRepository.deleteAllInBatch();
         conceptRepository.deleteAllInBatch();
         specialityRepository.deleteAllInBatch();
+    }
+
+    private void initDB(){
+        concept_one = conceptRepository.save(new Concept("concept numero 1"));
+        concept_two = conceptRepository.save(new Concept("concept numero 2"));
+
+        module_one = moduleRepository.save(new Module("module 1", "ceci est le module 1"));
+        module_two = moduleRepository.save(new Module("module 2", "ceci est le module 2"));
+
+        spe_one = specialityRepository.save(new Speciality("speciality 1", "ceci est la spe 1"));
+        spe_two = specialityRepository.save(new Speciality("speciality 2", "ceci est la spe 2"));
+        spe_three = specialityRepository.save(new Speciality("speciality 3", "ceci est la spe 3"));
+    }
+
+    private void makeLinks(){
+        module_one = moduleService.addConcept(module_one, concept_one);
+        concept_one = conceptService.get(concept_one.getId());
+
+        module_one = moduleService.addConcept(module_one, concept_two);
+        concept_two = conceptService.get(concept_two.getId());
+
+        module_two = moduleService.addConcept(module_two, concept_two);
+        concept_two = conceptService.get(concept_two.getId());
+        spe_one = specialityService.addModule(spe_one.getId(), module_one.getId(), false);
+        spe_two = specialityService.addModule(spe_two.getId(), module_two.getId(), false);
     }
 
     //@Test
@@ -62,29 +106,19 @@ public class FormServiceTest {
 
     @Test
     public void getSpecialitiesAndMatchingConceptByConceptsIds(){
-        Concept concept_one = conceptRepository.save(new Concept("concept numero 1"));
-        Concept concept_two = conceptRepository.save(new Concept("concept numero 2"));
+        ArrayList<Long> concept_ids = new ArrayList<>();
+        concept_ids.add(concept_one.getId());
+        concept_ids.add(concept_two.getId());
 
-        Module module_one = moduleRepository.save(new Module("module 1", "ceci est le module 1"));
-        Module module_two = moduleRepository.save(new Module("module 2", "ceci est le module 2"));
+        List<SpecialityAndConceptObject> resp = moduleRepository.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
 
-        module_one = moduleService.addConcept(module_one, concept_one);
-        concept_one = conceptService.get(concept_two.getId());
+        assertTrue("should contains 3 elements", resp.size() == 3);
+        // check the order of the list
+        assertTrue("first et second element should have the same spe", resp.get(0).getSpeciality() == resp.get(1).getSpeciality());
+        assertTrue("first element should be spe1", resp.get(0).getSpeciality().getId() == spe_one.getId());
+        assertTrue("third element should be spe2", resp.get(2).getSpeciality().getId() == spe_two.getId());
 
-        module_one = moduleService.addConcept(module_one, concept_two);
-        concept_two = conceptService.get(concept_two.getId());
-
-        module_two = moduleService.addConcept(module_two, concept_two);
-        concept_two = conceptService.get(concept_two.getId());
-
-        Speciality spe_one = specialityRepository.save(new Speciality("speciality 1", "ceci est la spe 1"));
-        Speciality spe_two = specialityRepository.save(new Speciality("speciality 2", "ceci est la spe 2"));
-        Speciality spe_three = specialityRepository.save(new Speciality("speciality 3", "ceci est la spe 3"));
-
-
-
-
-        // verif ordonné par chiffres
+        assertTrue("every element with the same spe should have different concepts", resp.get(0).getConcept() != resp.get(1).getConcept());
     }
 
 }
