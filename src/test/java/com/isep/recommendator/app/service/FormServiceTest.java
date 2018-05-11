@@ -8,6 +8,7 @@ import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import com.isep.recommendator.security.config.WebSecurityConfig;
 import org.junit.Before;
@@ -43,6 +44,10 @@ public class FormServiceTest {
     SpecialityRepository specialityRepository;
     @Autowired
     SpecialityService specialityService;
+    @Autowired
+    FormService formService;
+    @Autowired
+    SpecialityModuleRepository specialityModuleRepository;
 
     private Concept concept_one;
     private Concept concept_two;
@@ -62,6 +67,7 @@ public class FormServiceTest {
     }
 
     private void clean(){
+        specialityModuleRepository.deleteAllInBatch();
         moduleRepository.deleteAllInBatch();
         conceptRepository.deleteAllInBatch();
         specialityRepository.deleteAllInBatch();
@@ -88,21 +94,10 @@ public class FormServiceTest {
 
         module_two = moduleService.addConcept(module_two, concept_two);
         concept_two = conceptService.get(concept_two.getId());
+
         spe_one = specialityService.addModule(spe_one.getId(), module_one.getId(), false);
         spe_two = specialityService.addModule(spe_two.getId(), module_two.getId(), false);
     }
-
-    //@Test
-    //public void getSpecialitiesByConceptsIdsWithMatching(){
-//        ArrayList<Long> concept_ids = new ArrayList<>();
-//        concept_ids.add(concept1.getId());
-//        concept_ids.add(concept4.getId());
-//        this.makeLinks();
-//        List<SpecialityAndMatchingConceptsObject> list = formService.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
-//        System.out.println(list);
-//        assertTrue("it should return 3 spe", list.size() == 3);
-//        assertTrue("", list.get(0).getMatching_concepts().size() == 2);
-    //}
 
     @Test
     public void getSpecialitiesAndMatchingConceptByConceptsIds(){
@@ -110,6 +105,7 @@ public class FormServiceTest {
         concept_ids.add(concept_one.getId());
         concept_ids.add(concept_two.getId());
 
+        System.out.println(spe_one);
         List<SpecialityAndConceptObject> resp = moduleRepository.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
 
         assertTrue("should contains 3 elements", resp.size() == 3);
@@ -119,6 +115,39 @@ public class FormServiceTest {
         assertTrue("third element should be spe2", resp.get(2).getSpeciality().getId() == spe_two.getId());
 
         assertTrue("every element with the same spe should have different concepts", resp.get(0).getConcept() != resp.get(1).getConcept());
+    }
+
+    @Test
+    public void getSpecialitiesByConceptsIdsWithMatching(){
+        ArrayList<Long> concept_ids = new ArrayList<>();
+        concept_ids.add(concept_one.getId());
+        concept_ids.add(concept_two.getId());
+
+        List<SpecialityAndMatchingConceptsObject> list = formService.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
+
+        assertTrue("it should return 2 spe", list.size() == 2);
+
+        assertTrue("the first spe should be spe1", list.get(0).getSpeciality().getId() == spe_one.getId());
+        assertTrue("it should have 2 matching concepts", list.get(0).getMatching_concepts().size() == 2);
+
+        assertTrue("first concept should be concept one or two",
+                list.get(0).getMatching_concepts().get(0).getId() == concept_one.getId() ||
+                        list.get(0).getMatching_concepts().get(0).getId() ==concept_two.getId()
+        );
+
+        assertTrue("second concept should be concept one or two and different from first",
+                ( list.get(0).getMatching_concepts().get(1).getId() == concept_one.getId() ||
+                        list.get(0).getMatching_concepts().get(1).getId() == concept_two.getId() ) &&
+                        list.get(0).getMatching_concepts().get(1).getId() != list.get(0).getMatching_concepts().get(0).getId()
+        );
+
+        assertTrue("the second spe should be spe2", list.get(1).getSpeciality().getId() == spe_two.getId());
+
+        assertTrue("it should have 1 matching concepts",
+                list.get(1).getMatching_concepts().size() == 1 && !list.get(1).getMatching_concepts().isEmpty());
+
+        assertTrue("it should be concept2", list.get(1).getMatching_concepts().get(0).getId() == concept_two.getId());
+
     }
 
 }
