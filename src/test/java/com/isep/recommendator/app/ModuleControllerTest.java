@@ -1,6 +1,8 @@
 package com.isep.recommendator.app;
 
+import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
+import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.security.config.WebSecurityConfig;
 import org.junit.Before;
@@ -11,9 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.Charset;
@@ -27,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class, WebSecurityConfig.class})
 @WebAppConfiguration
@@ -44,6 +49,9 @@ public class ModuleControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private ConceptRepository conceptRepo;
+
 
     @Before
     public void before() {
@@ -51,6 +59,7 @@ public class ModuleControllerTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
         this.moduleRepo.deleteAllInBatch();
+        this.conceptRepo.deleteAllInBatch();
     }
 
     @Test
@@ -100,7 +109,6 @@ public class ModuleControllerTest {
 
         mockMvc.perform(post("/modules")
                 .contentType(contentType)
-                //.header("Authorization", TOKEN_PREFIX + adminToken)
                 .param("name", name)
                 .param("description", description))
                 .andExpect(status().isCreated())
@@ -122,7 +130,6 @@ public class ModuleControllerTest {
 
         mockMvc.perform(post("/modules")
                 .contentType(contentType)
-                //.header("Authorization", TOKEN_PREFIX + userToken)
                 .param("name", name)
                 .param("description", description))
                 .andExpect(status().isForbidden()
@@ -141,14 +148,73 @@ public class ModuleControllerTest {
 
         mockMvc.perform(post("/modules")
                 .contentType(contentType)
-                //.header("Authorization", TOKEN_PREFIX + adminToken)
                 .param("name", name))
                 .andExpect(status().isBadRequest());
-        System.out.println(status());
 
         // la réponse est good, on test maintenant que rien n'a été persist
         List<Module> modules = moduleRepo.findByName(name);
         assertTrue("it shouldn't find any module with this name", modules.size() == 0);
+    }
+
+    @Test
+    // [POST] /modules/{id}/concepts - not admin
+    public void addConcept_forbidden() throws Exception {
+        String module_name = "nom du module";
+        String module_description = "description du module";
+        Module module = moduleRepo.save(new Module(module_name, module_description));
+
+        mockMvc.perform(post("/modules/"+module.getId()+"/concepts")
+                .contentType(contentType))
+                .andExpect(status().isForbidden()
+                );
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    // [POST] /modules/{id}/concepts - all params, admin
+    public void addConcept_OK() throws Exception {
+        String module_name = "nom du module";
+        String module_description = "description du module";
+        Module module = moduleRepo.save(new Module(module_name, module_description));
+
+        String concept_name = "nom du concept";
+        Concept concept = conceptRepo.save(new Concept(concept_name));
+
+        mockMvc.perform(post("/modules/"+module.getId()+"/concepts")
+                .contentType(contentType)
+                .param("concept_id", concept.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.concepts[0].name", is(concept.getName()))
+                );
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    // [POST] /modules/{id}/concepts - module not found
+    public void addConcept_moduleNotFound() throws Exception {
+        String concept_name = "nom du concept";
+        Concept concept = conceptRepo.save(new Concept(concept_name));
+
+        mockMvc.perform(post("/modules/420/concepts")
+                .contentType(contentType)
+                .param("concept_id", concept.getId().toString()))
+                .andExpect(status().isNotFound()
+                );
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    // [POST] /modules/{id}/concepts - concept not found
+    public void addConcept_conceptNotFound_badRequest() throws Exception {
+        String module_name = "nom du module";
+        String module_description = "description du module";
+        Module module = moduleRepo.save(new Module(module_name, module_description));
+        mockMvc.perform(post("/modules/"+module.getId()+"/concepts")
+                .contentType(contentType)
+                .param("concept_id", "420"))
+                .andExpect(status().isNotFound()
+                );
     }
 
 }

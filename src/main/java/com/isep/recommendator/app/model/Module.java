@@ -1,5 +1,8 @@
 package com.isep.recommendator.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -17,13 +20,17 @@ public class Module implements Serializable {
     private Long module_id;
 
     @NotBlank
+    @Column(unique = true)
     private String name;
 
     @NotBlank
     private String description;
 
-    public Module(){
+    @ManyToMany(mappedBy = "modules", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonManagedReference
+    private Set<Concept> concepts = new HashSet<>();
 
+    public Module(){
     }
 
     public Module(String name, String description){
@@ -35,16 +42,16 @@ public class Module implements Serializable {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Set<SpecialityModule> getSpecialityModules() {
@@ -61,6 +68,14 @@ public class Module implements Serializable {
 
     public void setId(Long module_id) {
         this.module_id = module_id;
+    }
+
+    public Set<Concept> getConcepts() {
+        return concepts;
+    }
+
+    public void setConcepts(Set<Concept> concepts) {
+        this.concepts = concepts;
     }
 }
 
