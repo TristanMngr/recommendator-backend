@@ -48,6 +48,7 @@ public class FormServiceTest {
 
     private Concept concept_one;
     private Concept concept_two;
+    private Concept concept_three;
 
     private Module module_one;
     private Module module_two;
@@ -73,6 +74,7 @@ public class FormServiceTest {
     private void initDB(){
         concept_one = conceptRepository.save(new Concept("concept numero 1"));
         concept_two = conceptRepository.save(new Concept("concept numero 2"));
+        concept_three = conceptRepository.save(new Concept("concept numero 3"));
 
         module_one = moduleRepository.save(new Module("module 1", "ceci est le module 1"));
         module_two = moduleRepository.save(new Module("module 2", "ceci est le module 2"));
@@ -91,6 +93,9 @@ public class FormServiceTest {
 
         module_two = moduleService.addConcept(module_two, concept_two);
         concept_two = conceptService.get(concept_two.getId());
+
+        module_two = moduleService.addConcept(module_two, concept_three);
+        concept_three = conceptService.get(concept_three.getId());
 
         spe_one = specialityService.addModule(spe_one.getId(), module_one.getId(), false);
         spe_two = specialityService.addModule(spe_two.getId(), module_two.getId(), false);
