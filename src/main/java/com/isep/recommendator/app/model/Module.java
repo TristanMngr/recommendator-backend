@@ -1,6 +1,5 @@
 package com.isep.recommendator.app.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -25,7 +24,7 @@ public class Module implements Serializable {
     @NotBlank
     private String description;
 
-    @ManyToMany(mappedBy = "modules", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch= FetchType.EAGER, mappedBy = "modules", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonManagedReference
     private Set<Concept> concepts = new HashSet<>();
 
