@@ -1,7 +1,6 @@
 package com.isep.recommendator.app.controller;
 
 import com.isep.recommendator.app.model.Module;
-
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.service.SpecialityService;

@@ -25,7 +25,7 @@ public class UserController {
     // create a new user
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestParam("email") String email, @RequestParam("password") String password)
-            throws BadRequestException {
+    throws BadRequestException {
         User user = userService.register(email, password);
         return user;
     }

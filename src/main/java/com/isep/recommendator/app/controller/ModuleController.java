@@ -19,12 +19,12 @@ import java.util.List;
 @RequestMapping("/modules")
 @Api(value = "/modules", description = "All endpoints about modules")
 public class ModuleController {
-
     private final ModuleService  moduleService;
     private final ConceptService conceptService;
 
+
     @Autowired
-    public ModuleController(ModuleService moduleService, ConceptService conceptService) {
+    public ModuleController(ModuleService moduleService, ConceptService conceptService){
         this.moduleService = moduleService;
         this.conceptService = conceptService;
     }
@@ -37,7 +37,8 @@ public class ModuleController {
     })
     @ResponseStatus(HttpStatus.OK)
     public List<Module> getAll() {
-        return moduleService.getAll();
+
+       return moduleService.getAll();
     }
 
 
@@ -64,7 +65,7 @@ public class ModuleController {
     @ApiOperation(value = "add a concept to a module [ADMIN]", notes = "should be admin", response = Module.class)
     @ResponseStatus(HttpStatus.OK)
     public Module addConcept(@PathVariable(value = "id") Long module_id, @RequestParam("concept_id") Long concept_id) {
-        Module  module  = moduleService.get(module_id);
+        Module module = moduleService.get(module_id);
         Concept concept = conceptService.get(concept_id);
         module = moduleService.addConcept(module, concept);
         return module;

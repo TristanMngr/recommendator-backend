@@ -30,8 +30,8 @@ public class Module implements Serializable {
     @JsonManagedReference
     private Set<Concept> concepts = new HashSet<>();
 
-    public Module(){
-    }
+    public Module(){}
+
 
     public Module(String name, String description){
         this.setName(name);
