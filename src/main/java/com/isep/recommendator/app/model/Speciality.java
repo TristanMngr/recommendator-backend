@@ -1,5 +1,7 @@
 package com.isep.recommendator.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
@@ -21,7 +23,7 @@ public class Speciality {
     @ManyToMany(mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Job> jobs = new HashSet<>();
 
-    @OneToMany(mappedBy = "speciality", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "speciality", cascade = CascadeType.ALL)
     private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
 
     public Speciality() {
@@ -34,6 +36,10 @@ public class Speciality {
 
     public void setJobs(Set<Job> jobs) {
         this.jobs = jobs;
+    }
+
+    public Set<Job> getJobs() {
+        return jobs;
     }
 
     public Set<SpecialityModule> getSpecialityModules() {

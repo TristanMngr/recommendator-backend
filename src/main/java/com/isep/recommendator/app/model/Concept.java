@@ -30,7 +30,7 @@ public class Concept {
     public Concept() {
     }
 
-    public Concept(String name){
+    public Concept(String name) {
         this.setName(name);
     }
 
@@ -38,20 +38,19 @@ public class Concept {
         return name;
     }
 
-    public Long getId() {
-        return concept_id;
-    }
-
-    public Set<Module> getModules() {
-        return modules;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
+    public Long getId() {
+        return concept_id;
+    }
 
-    public void setId(Long concept_id){
+    public void setId(Long concept_id) {
         this.concept_id = concept_id;
+    }
+
+    public Set<Module> getModules() {
+        return modules;
     }
 }

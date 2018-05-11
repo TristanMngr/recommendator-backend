@@ -17,11 +17,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/modules")
-@Api(value="/modules", description="All endpoints about modules")
+@Api(value = "/modules", description = "All endpoints about modules")
 public class ModuleController {
-
-    private final ModuleService moduleService;
+    private final ModuleService  moduleService;
     private final ConceptService conceptService;
+
 
     @Autowired
     public ModuleController(ModuleService moduleService, ConceptService conceptService){
@@ -37,6 +37,7 @@ public class ModuleController {
     })
     @ResponseStatus(HttpStatus.OK)
     public List<Module> getAll() {
+
        return moduleService.getAll();
     }
 
@@ -52,7 +53,7 @@ public class ModuleController {
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ApiOperation(value = "Create a module [ADMIN]", notes="should be admin" ,response = Module.class)
+    @ApiOperation(value = "Create a module [ADMIN]", notes = "should be admin", response = Module.class)
     @ResponseStatus(HttpStatus.CREATED)
     public Module create(@RequestParam("name") String name, @RequestParam("description") String description) {
         Module module = moduleService.create(name, description);
@@ -61,7 +62,7 @@ public class ModuleController {
 
     @PostMapping("/{id}/concepts")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ApiOperation(value = "add a concept to a module [ADMIN]", notes="should be admin" ,response = Module.class)
+    @ApiOperation(value = "add a concept to a module [ADMIN]", notes = "should be admin", response = Module.class)
     @ResponseStatus(HttpStatus.OK)
     public Module addConcept(@PathVariable(value = "id") Long module_id, @RequestParam("concept_id") Long concept_id) {
         Module module = moduleService.get(module_id);

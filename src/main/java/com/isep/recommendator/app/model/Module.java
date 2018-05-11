@@ -19,6 +19,7 @@ public class Module implements Serializable {
     private Long module_id;
 
     @NotBlank
+    @Column(unique = true)
     private String name;
 
     @NotBlank
@@ -28,9 +29,8 @@ public class Module implements Serializable {
     @JsonManagedReference
     private Set<Concept> concepts = new HashSet<>();
 
-    public Module(){
+    public Module(){}
 
-    }
 
     public Module(String name, String description){
         this.setName(name);
@@ -41,16 +41,16 @@ public class Module implements Serializable {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Set<SpecialityModule> getSpecialityModules() {

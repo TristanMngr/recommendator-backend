@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserRepository userRepo;
-    private final UserService userService;
+    private final UserService    userService;
 
     @Autowired
-    public UserController(UserRepository userRepo, UserService userService){
+    public UserController(UserRepository userRepo, UserService userService) {
         this.userRepo = userRepo;
         this.userService = userService;
     }
