@@ -3,12 +3,11 @@ package com.isep.recommendator.app.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "speciality_module",
         uniqueConstraints = @UniqueConstraint(columnNames = {"speciality_id", "module_id" })
-        )
+)
 public class SpecialityModule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,5 +67,3 @@ public class SpecialityModule {
         this.speciality_module_id = speciality_module_id;
     }
 }
-
-

@@ -1,9 +1,12 @@
-package com.isep.recommendator.app;
+package com.isep.recommendator.app.controller;
 
+import com.isep.recommendator.app.Application;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.service.ConceptService;
+import com.isep.recommendator.app.service.ModuleService;
 import com.isep.recommendator.security.config.WebSecurityConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,10 +50,16 @@ public class ModuleControllerTest {
     private ModuleRepository moduleRepo;
 
     @Autowired
+    private ModuleService moduleService;
+
+    @Autowired
     private WebApplicationContext webApplicationContext;
 
     @Autowired
     private ConceptRepository conceptRepo;
+
+    @Autowired
+    private ConceptService conceptService;
 
 
     @Before
@@ -180,6 +189,9 @@ public class ModuleControllerTest {
         String concept_name = "nom du concept";
         Concept concept = conceptRepo.save(new Concept(concept_name));
 
+        assertTrue("the module should not have nya concept", module.getConcepts().size() == 0);
+        assertTrue("the concept should not have have any module", concept.getModules().size() == 0);
+
         mockMvc.perform(post("/modules/"+module.getId()+"/concepts")
                 .contentType(contentType)
                 .param("concept_id", concept.getId().toString()))
@@ -187,6 +199,10 @@ public class ModuleControllerTest {
                 .andExpect(jsonPath("$.concepts[0].name", is(concept.getName()))
                 );
 
+        Concept new_concept = conceptService.get(concept.getId());
+        Module new_module = moduleService.get(module.getId());
+        assertTrue("the module should have a concept", new_module.getConcepts().size() > 0);
+        assertTrue("the concept should have a module", new_concept.getModules().size() > 0);
     }
 
     @Test

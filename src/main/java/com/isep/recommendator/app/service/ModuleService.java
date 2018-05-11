@@ -39,9 +39,9 @@ public class ModuleService {
     }
 
     public Module addConcept(Module module, Concept concept){
-        module.getConcepts().add(concept);
         concept.getModules().add(module);
-        return moduleRepo.saveAndFlush(module);
+        module.getConcepts().add(concept);
+        return moduleRepo.save(module);
     }
 
     public Module create(String name, String description){

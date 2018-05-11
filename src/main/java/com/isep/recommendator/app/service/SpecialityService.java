@@ -10,7 +10,6 @@ import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 

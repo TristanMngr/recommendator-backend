@@ -23,7 +23,7 @@ public class Speciality {
     @ManyToMany(mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Job> jobs = new HashSet<>();
 
-    @OneToMany(mappedBy = "speciality", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "speciality", cascade = CascadeType.ALL)
     private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
 
     public Speciality() {
