@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.controller;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.model.Job;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.service.JobService;
@@ -47,8 +48,8 @@ public class JobController {
             @ApiResponse(code = 201, message = "Created")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public Job create(Job job) {
-        return jobService.create(job);
+    public Job create(@RequestParam("name") String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
+        return jobService.create(name, description);
     }
 
 

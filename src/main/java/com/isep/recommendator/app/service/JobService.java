@@ -1,5 +1,7 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.BadRequestException;
+import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Job;
 import com.isep.recommendator.app.model.Speciality;
@@ -8,6 +10,8 @@ import com.isep.recommendator.app.repository.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,27 +30,28 @@ public class JobService {
         return jobRepository.findAll();
     }
 
-    public Job create(Job job) {
-        return jobRepository.save(job);
+    public Job create(String name, String description) throws BadRequestException {
+        jobAlreadyExist(name);
+
+        try {
+            @Valid Job job = new Job(name, description) ;
+            return jobRepository.save(job);
+        } catch (ConstraintViolationException e) {
+            throw new CustomValidationException(e);
+        }
     }
 
     public Job destroy(Long jobId) {
-        Optional<Job> job = jobRepository.findById(jobId);
+        Job job = jobFound(jobId);
 
-        if (!job.isPresent())
-            throw new ResourceNotFoundException("Job with id " + jobId + " not found");
-
-        jobRepository.delete(job.get());
-
-        return job.get();
+        jobRepository.delete(job);
+        return job;
     }
 
     public Job getJob(Long jobId) throws ResourceNotFoundException {
-        Optional<Job> job = jobRepository.findById(jobId);
+        Job job = jobFound(jobId);
 
-        if (!job.isPresent())
-            throw new ResourceNotFoundException("Job with id " + jobId + " not found");
-        return job.get();
+        return job;
     }
 
     public List<Speciality> getSpecialitiesByJobsIds(List<Long> jobsIds) throws ResourceNotFoundException {
@@ -57,5 +62,22 @@ public class JobService {
         }
 
         return jobs;
+    }
+
+    // Custom errors messages
+
+    public void jobAlreadyExist(String name) throws BadRequestException {
+        if (jobRepository.findByName(name) != null) {
+            throw new BadRequestException("Job with name " + name + " already exist");
+        }
+    }
+
+    public Job jobFound(Long jobId) throws ResourceNotFoundException {
+        Optional<Job> job = jobRepository.findById(jobId);
+
+        if (!job.isPresent())
+            throw new ResourceNotFoundException("Job with id " + jobId + " not found");
+
+        return job.get();
     }
 }
