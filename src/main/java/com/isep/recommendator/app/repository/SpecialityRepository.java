@@ -10,7 +10,8 @@ import java.util.List;
 
 @Repository
 public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
-
     @Query("SELECT s FROM Speciality s JOIN s.jobs j WHERE j.job_id IN (:job_ids)")
     List<Speciality> findByJobsIds(@Param("job_ids") List<Long> jobIds);
+
+    Speciality findByName(String name);
 }
