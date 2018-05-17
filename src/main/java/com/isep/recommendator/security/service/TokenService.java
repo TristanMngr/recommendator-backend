@@ -21,9 +21,9 @@ public class TokenService {
     private static final long EXPIRATION_TIME = TokenProperties.getExpirationTime();
     private static final String TOKEN_PREFIX = TokenProperties.getTokenPrefix();
 
-    public static String buildToken(String email, ArrayList<String> roles){
+    public static String buildToken(String username, ArrayList<String> roles){
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(username)
                 .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
@@ -36,7 +36,7 @@ public class TokenService {
         if (user.isAdmin())
             roles.add("ADMIN");
 
-        return buildToken(user.getEmail(), roles);
+        return buildToken(user.getUsername(), roles);
     }
 
     public static Claims parseToken(String token){

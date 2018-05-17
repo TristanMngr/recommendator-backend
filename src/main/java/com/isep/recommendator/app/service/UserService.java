@@ -24,20 +24,20 @@ public class UserService  {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public User findByEmail(String email){
-        return userRepo.findByEmail(email);
+    public User findByUsername(String username){
+        return userRepo.findByUsername(username);
     }
 
-    public User register(String email, String password) throws BadRequestException {
-        if (userRepo.findByEmail(email) != null)
-            throw new BadRequestException("email not found");
+    public User register(String username, String password) throws BadRequestException {
+        if (userRepo.findByUsername(username) != null)
+            throw new BadRequestException("username not found");
 
-        return createUser(email, password, false);
+        return createUser(username, password, false);
     }
 
-    public User createUser(String email, String password, boolean isAdmin){
+    public User createUser(String username, String password, boolean isAdmin){
         try {
-            @Valid User user = new User(email, bCryptPasswordEncoder.encode(password), isAdmin);
+            @Valid User user = new User(username, bCryptPasswordEncoder.encode(password), isAdmin);
             userRepo.save(user);
             return user;
         } catch (ConstraintViolationException e){
@@ -47,7 +47,7 @@ public class UserService  {
 
     //used the user who made the request in a controller
     public User getCurrentUser(Principal principal){
-        return userRepo.findByEmail(principal.getName());
+        return userRepo.findByUsername(principal.getName());
     }
 
 }

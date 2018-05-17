@@ -58,11 +58,11 @@ public class JWTAuthorizationFilter
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
             Claims claims = tokenService.parseToken(token);
-            String email = claims.getSubject();
+            String username = claims.getSubject();
             ArrayList<SimpleGrantedAuthority> authorities = tokenService.getRolesFromClaims(claims);
 
-            if (email != null) {
-                return new UsernamePasswordAuthenticationToken(email, null, authorities);
+            if (username != null) {
+                return new UsernamePasswordAuthenticationToken(username, null, authorities);
             }
             return null;
         }
