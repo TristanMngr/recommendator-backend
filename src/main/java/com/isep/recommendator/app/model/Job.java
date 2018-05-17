@@ -33,6 +33,10 @@ public class Job {
     public Job() {
     }
 
+    public Job(String name) {
+        this.name = name;
+    }
+
     public Job(String name, String description) {
         this.name = name;
         this.description = description;

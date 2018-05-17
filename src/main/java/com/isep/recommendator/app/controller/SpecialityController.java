@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.controller;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.ModuleRepository;
@@ -47,8 +48,8 @@ public class SpecialityController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created")
     })
-    public Speciality create(@PathParam(value = "speciality") Speciality speciality) {
-        return specialityService.create(speciality);
+    public Speciality create(@RequestParam(value = "name") String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
+        return specialityService.create(name, description);
     }
 
 

@@ -1,5 +1,7 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.BadRequestException;
+import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Job;
 import com.isep.recommendator.app.model.Module;
@@ -10,6 +12,9 @@ import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,67 +33,61 @@ public class SpecialityService {
         this.jobRepository = jobRepository;
     }
 
-    public Speciality create(Speciality speciality) {
-        return specialityRepository.save(speciality);
+    public Speciality create(String name, String description) throws BadRequestException {
+        specialityAlreadyExist(name);
+
+        try {
+            @Valid Speciality speciality = new Speciality(name, description) ;
+            return specialityRepository.save(speciality);
+        } catch (ConstraintViolationException e) {
+            throw new CustomValidationException(e);
+        }
+
     }
 
     public Speciality getSpeciality(Long specialityId) throws ResourceNotFoundException {
-        Optional<Speciality> speciality = this.specialityRepository.findById(specialityId);
+        return specialityFound(specialityId);
 
-        if (!speciality.isPresent())
-            throw new ResourceNotFoundException("Speciality with id " + specialityId + "does not exist");
-
-        return speciality.get();
     }
 
     public Speciality destroy(Long specialityId) throws ResourceNotFoundException {
-        Optional<Speciality> speciality = specialityRepository.findById(specialityId);
+        Speciality speciality = specialityFound(specialityId);
 
-        if (!speciality.isPresent()) {
-            throw new ResourceNotFoundException("Speciality with id " + specialityId + " does not exist");
+        for (Job job : speciality.getJobs()) {
+            job.getSpecialities().remove(speciality);
         }
+        specialityRepository.delete(speciality);
 
-        for (Job job : speciality.get().getJobs()) {
-            job.getSpecialities().remove(speciality.get());
-        }
-        specialityRepository.delete(speciality.get());
-
-        return speciality.get();
+        return speciality;
     }
 
     public Speciality addModule(Long specialityId, Long moduleId, boolean isMain) throws ResourceNotFoundException {
         Optional<Module>     module     = moduleRepository.findById(moduleId);
-        Optional<Speciality> speciality = specialityRepository.findById(specialityId);
+        Speciality speciality = specialityFound(specialityId);
 
         if (!module.isPresent()) {
             throw new ResourceNotFoundException("Module with id " + moduleId + " does not exist");
         }
-        if (!speciality.isPresent()) {
-            throw new ResourceNotFoundException("Speciality with id " + specialityId + " does not exist");
-        }
 
-        speciality.get().getSpecialityModules().add(new SpecialityModule(speciality.get(), module.get(), isMain));
-        specialityRepository.save(speciality.get());
+        speciality.getSpecialityModules().add(new SpecialityModule(speciality, module.get(), isMain));
+        specialityRepository.save(speciality);
 
-        return speciality.get();
+        return speciality;
     }
 
     public Speciality addJob(Long specialityId, Long jobId) throws ResourceNotFoundException {
         Optional<Job>        job        = jobRepository.findById(jobId);
-        Optional<Speciality> speciality = specialityRepository.findById(specialityId);
+        Speciality speciality = specialityFound(specialityId);
 
         if (!job.isPresent()) {
             throw new ResourceNotFoundException("Job with id " + jobId + " does not exist");
         }
-        if (!speciality.isPresent()) {
-            throw new ResourceNotFoundException("Speciality with id " + specialityId + " does not exist");
-        }
 
-        speciality.get().getJobs().add(job.get());
-        job.get().getSpecialities().add(speciality.get());
-        specialityRepository.save(speciality.get());
+        speciality.getJobs().add(job.get());
+        job.get().getSpecialities().add(speciality);
+        specialityRepository.save(speciality);
 
-        return speciality.get();
+        return speciality;
     }
 
     public List<Speciality> getAll() {
@@ -102,5 +101,22 @@ public class SpecialityService {
             throw new ResourceNotFoundException("Specialities with these ids does not exist");
 
         return modules;
+    }
+
+    // Custom message errors
+
+    public Speciality specialityFound(Long specialityId) {
+        Optional<Speciality> speciality = this.specialityRepository.findById(specialityId);
+
+        if (!speciality.isPresent())
+            throw new ResourceNotFoundException("Speciality with id " + specialityId + "does not exist");
+
+        return speciality.get();
+    }
+
+    public void specialityAlreadyExist(String name) throws BadRequestException {
+        if (specialityRepository.findByName(name) != null) {
+            throw new BadRequestException("Speciality with name " + name + " already exist");
+        }
     }
 }
