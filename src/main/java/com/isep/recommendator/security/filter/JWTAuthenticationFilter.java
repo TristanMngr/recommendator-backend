@@ -51,7 +51,7 @@ public class JWTAuthenticationFilter
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        UserDetails user = customUserDetailsService.loadUserByUsername(username);
+        UserDetails user = customUserDetailsService.loadUserByUsername(username, password);
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                     username,

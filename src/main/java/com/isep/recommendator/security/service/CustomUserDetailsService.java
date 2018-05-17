@@ -1,6 +1,7 @@
 package com.isep.recommendator.security.service;
 
 import com.isep.recommendator.app.model.User;
+import com.isep.recommendator.app.service.LDAPaccess;
 import com.isep.recommendator.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,9 +44,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserDetails loadUserByUsername(String username, String password) throws UsernameNotFoundException {
         User user = userService.findByUsername(username);
-        System.out.println("EXISTANT");
-        System.out.println(user.getPassword());
-        System.out.println("Existant end");
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
         // ldap
@@ -58,11 +56,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 if (userLdap == null)
                 {
                     System.out.println("login invalide");
-                    System.exit(1);
+                    throw new UsernameNotFoundException("username not found");
                 }
                 System.out.println(userLdap.toString());
                 user = userService.createUser(username, password, true);
-
                 grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
             } catch(Exception e) {
                 System.err.println(e.getMessage());
@@ -76,13 +73,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
         }
 
-    /*if (user == null)
-        throw new UsernameNotFoundException("username not found");
-
-    Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-    grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
-    if (user.isAdmin())
-        grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));*/
         System.out.println(user.getUsername());
         System.out.println(user.getPassword());
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
