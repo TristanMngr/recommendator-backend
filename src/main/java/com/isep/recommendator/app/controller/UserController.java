@@ -24,9 +24,9 @@ public class UserController {
     @PostMapping("/register")
     // create a new user
     @ResponseStatus(HttpStatus.CREATED)
-    public User create(@RequestParam("email") String email, @RequestParam("password") String password)
+    public User create(@RequestParam("username") String username, @RequestParam("password") String password)
     throws BadRequestException {
-        User user = userService.register(email, password);
+        User user = userService.register(username, password);
         return user;
     }
 

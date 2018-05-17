@@ -22,7 +22,7 @@ public class DocController {
     // this route is never called, but used for Swagger documentation
     @PostMapping("/users/auth")
     @ApiOperation(value = "Get a JWT token (login) [PUBLIC]", response=AuthModel.class)
-    public HashMap<String, Object> auth(@RequestParam("email") String email, @RequestParam("password") String password) throws JsonProcessingException {
+    public HashMap<String, Object> auth(@RequestParam("username") String username, @RequestParam("password") String password) throws JsonProcessingException {
         return tokenService.getSuccessResponse("exempletoken");
     }
 

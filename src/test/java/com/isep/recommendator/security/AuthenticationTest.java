@@ -63,13 +63,13 @@ public class AuthenticationTest {
     @Test
     // [POST] /modules - all params, successfully created
     public void auth_credentialsOK() throws Exception {
-        String email = "user@email.com";
+        String username = "username";
         String password = "password";
-        User user = userService.createUser(email, password, false);
+        User user = userService.createUser(username, password, false);
 
         mockMvc.perform(post(AUTH_URL)
                 .contentType(contentType)
-                .param("email", email)
+                .param("username", username)
                 .param("password", password))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token", isA(String.class))
@@ -78,13 +78,13 @@ public class AuthenticationTest {
 
     @Test
     public void auth_badCredentials() throws Exception {
-        String email = "user@email.com";
+        String username = "username";
         String password = "password";
-        User user = userService.createUser(email, password, false);
+        User user = userService.createUser(username, password, false);
 
         mockMvc.perform(post(AUTH_URL)
                 .contentType(contentType)
-                .param("email", email)
+                .param("username", username)
                 .param("password", "thisisawrongpassword"))
                 .andExpect(status().is(401))
                 .andExpect(jsonPath("$.token").doesNotExist())
@@ -94,14 +94,14 @@ public class AuthenticationTest {
     }
 
     @Test
-    public void auth_emailNotFound() throws Exception {
+    public void auth_usernameNotFound() throws Exception {
         mockMvc.perform(post(AUTH_URL)
                 .contentType(contentType)
-                .param("email", "bob@email.com"))
+                .param("username", "username"))
                 .andExpect(status().is(401))
                 .andExpect(jsonPath("$.token").doesNotExist())
                 .andExpect(jsonPath("$.error", isA(String.class)))
-                .andExpect(jsonPath("$.message").value("email not found")
+                .andExpect(jsonPath("$.message").value("username not found")
                 );
     }
 }

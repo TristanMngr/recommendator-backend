@@ -14,10 +14,19 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
 
-    @NotBlank
+    private static final long serialVersionUID = 1L;
+    public String name;
+    private String lastName;
+    private String firstName;
+    private String employeeType;
+    private String employeeNumber;
+
     @Email
-    @Column(unique = true)
     private String email;
+
+    @NotBlank
+    @Column(unique = true)
+    private String username;
 
     @NotBlank
     @JsonIgnore
@@ -28,15 +37,37 @@ public class User implements Serializable {
     public User(){
     }
 
-    public User(String email, String password, boolean isAdmin){
+    public User(String username, String password, String name, String lastName, String firstName, String type, String numero, String email)
+    {
+        this.name = name;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.employeeType = type;
+        this.employeeNumber = numero;
+        this.username = username;
+        this.password = password;
         this.email = email;
+    }
+
+    public User(String username, String password, boolean isAdmin) {
+        this.username = username;
         this.password = password;
         this.isAdmin = isAdmin;
     }
 
 
-    public String getEmail() {
-        return email;
+
+    public String toString()
+    {
+        return "username = " + username + " name = " + name + " type = " + employeeType + " id = " + employeeNumber;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isAdmin() {
@@ -49,5 +80,9 @@ public class User implements Serializable {
 
     public Long getId() {
         return user_id;
+    }
+
+    public void setId(Long user_id) {
+        this.user_id = user_id;
     }
 }

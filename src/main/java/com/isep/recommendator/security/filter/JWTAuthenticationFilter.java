@@ -48,13 +48,13 @@ public class JWTAuthenticationFilter
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
-        String email = req.getParameter("email");
+        String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        UserDetails user = customUserDetailsService.loadUserByUsername(email);
+        UserDetails user = customUserDetailsService.loadUserByUsername(username);
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                    email,
+                    username,
                     password,
                     user.getAuthorities()
         );

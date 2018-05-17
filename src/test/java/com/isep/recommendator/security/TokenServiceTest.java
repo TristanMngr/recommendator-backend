@@ -42,32 +42,32 @@ public class TokenServiceTest {
 
     @Test
     public void tokenProcess_user(){
-        String email = "bob@email.com";
+        String username = "username";
         String password = "password";
 
-        User user = userService.createUser(email, password,false);
+        User user = userService.createUser(username, password,false);
         String token = tokenService.buildToken(user);
         assertTrue("it should generate a token", token.getClass() == String.class && token.length() > 10);
 
         Claims claims = tokenService.parseToken(token);
         ArrayList<String> roles = (ArrayList<String>) claims.get("roles");
-        assertTrue("it should have the good username attached", claims.getSubject().equals(email));
+        assertTrue("it should have the good username attached", claims.getSubject().equals(username));
         assertTrue("it should have only one role", roles.size() == 1);
         assertTrue("it should be the USER role", roles.get(0).equals("USER"));
     }
 
     @Test
     public void tokenProcess_admin(){
-        String email = "admin@email.com";
+        String username = "adminUsername";
         String password = "password";
 
-        User user = userService.createUser(email, password,true);
+        User user = userService.createUser(username, password,true);
         String token = tokenService.buildToken(user);
         assertTrue("it should generate a token", token.getClass() == String.class && token.length() > 10);
 
         Claims claims = tokenService.parseToken(token);
         ArrayList<String> roles = (ArrayList<String>) claims.get("roles");
-        assertTrue("it should have the good username attached", claims.getSubject().equals(email));
+        assertTrue("it should have the good username attached", claims.getSubject().equals(username));
         assertTrue("it should have two roles", roles.size() == 2);
         assertTrue("it should contains USER role", roles.indexOf("USER") != -1);
         assertTrue("it should contains ADMIN role", roles.indexOf("ADMIN") != -1);
