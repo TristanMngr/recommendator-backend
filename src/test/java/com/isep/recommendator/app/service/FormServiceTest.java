@@ -108,7 +108,7 @@ public class FormServiceTest {
         concept_ids.add(concept_two.getId());
 
         System.out.println(spe_one);
-        List<SpecialityAndConceptObject> resp = moduleRepository.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
+        List<SpecialityAndConceptObject> resp = specialityRepository.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
 
         assertTrue("should contains 3 elements", resp.size() == 3);
         // check the order of the list

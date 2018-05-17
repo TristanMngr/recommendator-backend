@@ -4,7 +4,7 @@ import com.isep.recommendator.app.custom_object.SpecialityAndConceptObject;
 import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Speciality;
-import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +16,13 @@ import java.util.List;
 public class FormService {
 
     @Autowired
-    ModuleRepository moduleRepo;
+    SpecialityRepository specialityRepo;
 
     // V1 du formulaire de la release 2. WORK IN PROGRESS !
     public List<SpecialityAndMatchingConceptsObject> getSpecialitiesByConceptsIdsWithMatching(List<Long> concept_ids){
         List<SpecialityAndMatchingConceptsObject> resp = new ArrayList<>();
 
-        List<SpecialityAndConceptObject> query_responses = moduleRepo.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
+        List<SpecialityAndConceptObject> query_responses = specialityRepo.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
         //  used to know the spe of the last iteration
         Speciality last_speciality = null;
         // used to create SpecialityAndMatchingConcepts Objects
