@@ -69,11 +69,6 @@ public class TokenService {
     }
 
     public static TokenResponseObject getSuccessResponse(String token){
-//        HashMap<String, Object> resp = new HashMap<>();
-//        resp.put("token", token);
-//        resp.put("token_type", TOKEN_PREFIX);
-//        resp.put("token_expiration", EXPIRATION_TIME);
-//        resp.put("full_token", TOKEN_PREFIX + token);
         return new TokenResponseObject(token, EXPIRATION_TIME, TOKEN_PREFIX, TOKEN_PREFIX + token);
     }
 
