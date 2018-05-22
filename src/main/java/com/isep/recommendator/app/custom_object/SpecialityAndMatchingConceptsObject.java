@@ -3,6 +3,7 @@ package com.isep.recommendator.app.custom_object;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Speciality;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpecialityAndMatchingConceptsObject {
@@ -13,6 +14,11 @@ public class SpecialityAndMatchingConceptsObject {
     public SpecialityAndMatchingConceptsObject(Speciality speciality, List<Concept> matching_concepts){
         this.speciality = speciality;
         this.matching_concepts = matching_concepts;
+    }
+
+    public SpecialityAndMatchingConceptsObject(Speciality speciality){
+        this.speciality = speciality;
+        this.matching_concepts = new ArrayList<>();
     }
 
     public List<Concept> getMatching_concepts() {

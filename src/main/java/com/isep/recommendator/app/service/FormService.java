@@ -17,9 +17,22 @@ public class FormService {
 
     @Autowired
     SpecialityRepository specialityRepo;
+    @Autowired
+    SpecialityService specialityService;
 
-    // V1 du formulaire de la release 2. WORK IN PROGRESS !
-    public List<SpecialityAndMatchingConceptsObject> getSpecialitiesByConceptsIdsWithMatching(List<Long> concept_ids){
+    // TODO throw exceptions quand ça fail (aucun concept trouvé)
+
+    public List<SpecialityAndMatchingConceptsObject> getAllSpecialitiesWithMatching(List<Long> concept_ids){
+        List<SpecialityAndMatchingConceptsObject> matching_spes = this.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
+
+        List<Long> spe_ids = this.getMatchingSpecialitiesIds(matching_spes);
+        List<SpecialityAndMatchingConceptsObject> other_spes = specialityRepo.getSpecialitiesAndEmptyMatchingConcepts(spe_ids);
+        matching_spes.addAll(other_spes);
+
+        return matching_spes;
+    }
+
+    protected List<SpecialityAndMatchingConceptsObject> getSpecialitiesByConceptsIdsWithMatching(List<Long> concept_ids){
         List<SpecialityAndMatchingConceptsObject> resp = new ArrayList<>();
 
         List<SpecialityAndConceptObject> query_responses = specialityRepo.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
@@ -48,6 +61,14 @@ public class FormService {
         this.sortSpecialities(resp);
         return resp;
 
+    }
+
+    private List<Long> getMatchingSpecialitiesIds(List<SpecialityAndMatchingConceptsObject> matching_spes){
+        List<Long> spe_ids = new ArrayList<>();
+        for (SpecialityAndMatchingConceptsObject obj : matching_spes){
+            spe_ids.add(obj.getSpeciality().getId());
+        }
+        return spe_ids;
     }
 
     // add an object "SpecialityAndMatchingConceptsObject" to a list, and return this list

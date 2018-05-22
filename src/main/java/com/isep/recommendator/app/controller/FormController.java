@@ -31,6 +31,6 @@ public class FormController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('USER')")
     public List<SpecialityAndMatchingConceptsObject> getSpecialitiesFromConcepts(@RequestParam("concept_ids") List<Long> concept_ids){
-        return formService.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
+        return formService.getAllSpecialitiesWithMatching(concept_ids);
     }
 }
