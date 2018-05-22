@@ -16,7 +16,6 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
   
     Speciality findByName(String name);
 
-    // pas sur que cette fonction aie sa place dans ce repo là ?
     @Query("SELECT new com.isep.recommendator.app.custom_object.SpecialityAndConceptObject(spe, c) FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) ORDER BY spe.speciality_id")
     List<SpecialityAndConceptObject> getSpecialitiesAndMatchingConceptByConceptsIds(@Param("concept_ids")List<Long> concept_ids);
 }
