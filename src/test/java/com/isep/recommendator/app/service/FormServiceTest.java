@@ -119,22 +119,6 @@ public class FormServiceTest {
     }
 
     @Test
-    public void getSpecialitiesAndMatchingConceptByConceptsIds_fail(){
-        ArrayList<Long> concept_ids = new ArrayList<>();
-        concept_ids.add(concept_three.getId());
-
-        List<SpecialityAndConceptObject> resp = specialityRepository.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
-
-        assertTrue("should contains 3 elements", resp.size() == 3);
-        // check the order of the list
-        assertTrue("first et second element should have the same spe", resp.get(0).getSpeciality() == resp.get(1).getSpeciality());
-        assertTrue("first element should be spe1", resp.get(0).getSpeciality().getId() == spe_one.getId());
-        assertTrue("third element should be spe2", resp.get(2).getSpeciality().getId() == spe_two.getId());
-
-        assertTrue("every element with the same spe should have different concepts", resp.get(0).getConcept() != resp.get(1).getConcept());
-    }
-
-    @Test
     public void getSpecialitiesByConceptsIdsWithMatching(){
         ArrayList<Long> concept_ids = new ArrayList<>();
         concept_ids.add(concept_one.getId());
