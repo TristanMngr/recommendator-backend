@@ -20,28 +20,32 @@ public class FormService {
     @Autowired
     SpecialityService specialityService;
 
-    // TODO throw exceptions quand ça fail (aucun concept trouvé)
-
     public List<SpecialityAndMatchingConceptsObject> getAllSpecialitiesWithMatching(List<Long> concept_ids){
         List<SpecialityAndMatchingConceptsObject> matching_spes = this.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
 
         List<Long> spe_ids = this.getMatchingSpecialitiesIds(matching_spes);
-        List<SpecialityAndMatchingConceptsObject> other_spes = specialityRepo.getSpecialitiesAndEmptyMatchingConcepts(spe_ids);
+        List<SpecialityAndMatchingConceptsObject> other_spes = specialityService.getRemainingSpecialities(spe_ids);
         matching_spes.addAll(other_spes);
 
         return matching_spes;
     }
 
     protected List<SpecialityAndMatchingConceptsObject> getSpecialitiesByConceptsIdsWithMatching(List<Long> concept_ids){
-        List<SpecialityAndMatchingConceptsObject> resp = new ArrayList<>();
-
         List<SpecialityAndConceptObject> query_responses = specialityRepo.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
+        List<SpecialityAndMatchingConceptsObject> resp = this.formatSpecialitiesWithMatchingConcepts(query_responses);
+        this.sortSpecialities(resp);
+        return resp;
+    }
+
+    // transform a list of SpecialityAndConceptObject (to format) to a list of Specialities with Matching Concepts
+    private  List<SpecialityAndMatchingConceptsObject> formatSpecialitiesWithMatchingConcepts(List<SpecialityAndConceptObject> to_format){
+        List<SpecialityAndMatchingConceptsObject> resp = new ArrayList<>();
         //  used to know the spe of the last iteration
         Speciality last_speciality = null;
         // used to create SpecialityAndMatchingConcepts Objects
         List<Concept> list_concepts = new ArrayList<>();
 
-        for (SpecialityAndConceptObject query : query_responses){
+        for (SpecialityAndConceptObject query : to_format){
 
             if (last_speciality != null && query.getSpeciality() != last_speciality){
                 this.addSpecialityAndMatchingConceptsToResponse(resp, last_speciality, list_concepts);
@@ -51,16 +55,14 @@ public class FormService {
             list_concepts.add(query.getConcept());
 
             // si c'est la derniere itération
-            if (query_responses.indexOf(query) == query_responses.size()-1){
+            if (to_format.indexOf(query) == to_format.size()-1){
                 this.addSpecialityAndMatchingConceptsToResponse(resp, query.getSpeciality(), list_concepts);
             }
 
             last_speciality = query.getSpeciality();
         }
 
-        this.sortSpecialities(resp);
         return resp;
-
     }
 
     private List<Long> getMatchingSpecialitiesIds(List<SpecialityAndMatchingConceptsObject> matching_spes){

@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject;
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,5 +120,12 @@ public class SpecialityService {
         if (specialityRepository.findByName(name) != null) {
             throw new BadRequestException("Speciality with name " + name + " already exist");
         }
+    }
+
+    public List<SpecialityAndMatchingConceptsObject> getRemainingSpecialities(List<Long> excluded_ids){
+        if (excluded_ids.isEmpty())
+            return specialityRepository.getAllSpecialitiesWithNoMatchingConcepts();
+
+        return specialityRepository.getRemainingSpecialitiesAndNullMatchingConcepts(excluded_ids);
     }
 }

@@ -21,5 +21,8 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
     List<SpecialityAndConceptObject> getSpecialitiesAndMatchingConceptByConceptsIds(@Param("concept_ids")List<Long> concept_ids);
 
     @Query("SELECT new com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject(s) FROM Speciality s WHERE s.speciality_id NOT IN (:ids)")
-    List<SpecialityAndMatchingConceptsObject> getSpecialitiesAndEmptyMatchingConcepts(@Param("ids") List<Long> ids);
+    List<SpecialityAndMatchingConceptsObject> getRemainingSpecialitiesAndNullMatchingConcepts(@Param("ids") List<Long> ids);
+
+    @Query("SELECT new com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject(s) FROM Speciality s")
+    List<SpecialityAndMatchingConceptsObject> getAllSpecialitiesWithNoMatchingConcepts();
 }
