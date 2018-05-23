@@ -136,11 +136,15 @@ public class FormServiceTest {
                         list.get(0).getMatching_concepts().get(0).getId() ==concept_two.getId()
         );
 
+        assertTrue("matching should be > 0", list.get(0).getMatching() > 0);
+
         assertTrue("second concept should be concept one or two and different from first",
                 ( list.get(0).getMatching_concepts().get(1).getId() == concept_one.getId() ||
                         list.get(0).getMatching_concepts().get(1).getId() == concept_two.getId() ) &&
                         list.get(0).getMatching_concepts().get(1).getId() != list.get(0).getMatching_concepts().get(0).getId()
         );
+
+        assertTrue("matching should be > 0", list.get(1).getMatching() > 0);
 
         assertTrue("the second spe should be spe2", list.get(1).getSpeciality().getId() == spe_two.getId());
 
@@ -162,12 +166,15 @@ public class FormServiceTest {
         assertTrue("it should return 3 spe", list.size() == 3);
         assertTrue("last spe should be spe 3", list.get(2).getSpeciality().getId() == spe_three.getId());
         assertTrue("it shouldn't contain any concepts", list.get(2).getMatching_concepts().size() == 0);
+        assertTrue("last spe matching should be 0", list.get(2).getMatching() == 0);
 
         assertTrue("all three specialities should be differents",
                 list.get(0).getSpeciality().getId() != list.get(1).getSpeciality().getId() &&
                         list.get(1).getSpeciality().getId() != list.get(2).getSpeciality().getId() &&
                         list.get(2).getSpeciality().getId() != list.get(0).getSpeciality().getId()
         );
+
+
     }
 
     @Test
