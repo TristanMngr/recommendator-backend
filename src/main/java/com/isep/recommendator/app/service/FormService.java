@@ -1,74 +1,117 @@
 package com.isep.recommendator.app.service;
 
-import com.isep.recommendator.app.custom_object.SpecialityAndConceptObject;
-import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject;
-import com.isep.recommendator.app.model.Concept;
+import com.isep.recommendator.app.custom_object.Form2Response;
+import com.isep.recommendator.app.custom_object.ModuleWithMatchingConcepts;
+import com.isep.recommendator.app.custom_object.SpeModuleConcept;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class FormService {
 
     @Autowired
     SpecialityRepository specialityRepo;
+    @Autowired
+    SpecialityService specialityService;
 
-    // V1 du formulaire de la release 2. WORK IN PROGRESS !
-    public List<SpecialityAndMatchingConceptsObject> getSpecialitiesByConceptsIdsWithMatching(List<Long> concept_ids){
-        List<SpecialityAndMatchingConceptsObject> resp = new ArrayList<>();
 
-        List<SpecialityAndConceptObject> query_responses = specialityRepo.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
-        //  used to know the spe of the last iteration
+    public List<Form2Response> getForm2(List<Long> concept_ids){
+        List<Form2Response> partial_resp = this.getPartialResponse(concept_ids);
+        List<Long> spe_ids = this.getMatchingSpecialitiesIds(partial_resp);
+        List<Form2Response> other_spes = specialityService.getRemainingSpecialities(spe_ids);
+        partial_resp.addAll(other_spes);
+        return partial_resp;
+    }
+
+    protected List<Form2Response> getPartialResponse(List<Long> concept_ids){
+        List<SpeModuleConcept> query_responses = specialityRepo.getSpeModuleConceptByConceptIds(concept_ids);
+        List<Form2Response> resp = this.formatMatchingSpecialities(query_responses);
+        this.sortSpecialities(resp);
+        return resp;
+    }
+
+    private List<Form2Response> formatMatchingSpecialities(List<SpeModuleConcept> to_format){
+        List<Form2Response> resp = new ArrayList<>();
         Speciality last_speciality = null;
-        // used to create SpecialityAndMatchingConcepts Objects
-        List<Concept> list_concepts = new ArrayList<>();
+        // used to create Form2Response Objects
+        Map<Long, ModuleWithMatchingConcepts> list_modulesAndconcepts = new HashMap<>();
 
-        for (SpecialityAndConceptObject query : query_responses){
+
+        for (SpeModuleConcept query : to_format){
 
             if (last_speciality != null && query.getSpeciality() != last_speciality){
-                this.addSpecialityAndMatchingConceptsToResponse(resp, last_speciality, list_concepts);
-                list_concepts = new ArrayList<>();
+                this.addElementToResponse(resp, last_speciality, list_modulesAndconcepts);
+                list_modulesAndconcepts = new HashMap<>();
             }
 
-            list_concepts.add(query.getConcept());
+            // list_concepts.add(query.getConcept());
+            this.formatModuleWithMatchingConcepts(list_modulesAndconcepts, query);
+
 
             // si c'est la derniere itération
-            if (query_responses.indexOf(query) == query_responses.size()-1){
-                this.addSpecialityAndMatchingConceptsToResponse(resp, query.getSpeciality(), list_concepts);
+            if (to_format.indexOf(query) == to_format.size()-1){
+                this.addElementToResponse(resp, query.getSpeciality(), list_modulesAndconcepts);
             }
 
             last_speciality = query.getSpeciality();
         }
 
-        this.sortSpecialities(resp);
         return resp;
 
     }
 
-    // add an object "SpecialityAndMatchingConceptsObject" to a list, and return this list
-    private List<SpecialityAndMatchingConceptsObject> addSpecialityAndMatchingConceptsToResponse(List<SpecialityAndMatchingConceptsObject> response,
-                                                       Speciality speciality,
-                                                       List<Concept> list_concepts){
-        SpecialityAndMatchingConceptsObject spe = new SpecialityAndMatchingConceptsObject(speciality, list_concepts);
+    private void formatModuleWithMatchingConcepts(Map<Long,ModuleWithMatchingConcepts> list, SpeModuleConcept query){
+        Long id = query.getModule().getId();
+
+        if (list.containsKey(id)) {
+            list.get(id).addMatching_concept(query.getConcept());
+        }
+        else {
+            ModuleWithMatchingConcepts elem = new ModuleWithMatchingConcepts(query.getModule(), query.getConcept());
+            list.put(id, elem);
+        }
+    }
+
+    private void addElementToResponse(List<Form2Response> response, Speciality speciality,
+                                      Map<Long, ModuleWithMatchingConcepts> modules){
+
+        Double score = 0.0;
+        for (Map.Entry<Long, ModuleWithMatchingConcepts> m : modules.entrySet()) {
+            score += m.getValue().getMatching_concepts().size();
+        }
+        int matching = this.calculateMatchingForm2(score, speciality);
+
+        Form2Response spe = new Form2Response(speciality, modules, matching);
         response.add(spe);
-        return response;
+    }
+
+    protected int calculateMatchingForm2(Double score, Speciality speciality){
+        Double matching = (score / specialityService.getMaxScore(speciality)) * 100;
+        return matching.intValue();
     }
 
     // sort a list of SpecialityAndMatchingConcepts object, based on the number of matching concepts
-    private void sortSpecialities(List<SpecialityAndMatchingConceptsObject> list){
+    private void sortSpecialities(List<Form2Response> list){
         Collections.sort(list, (first, second) -> {
-            if (first.getMatching_concepts().size() > second.getMatching_concepts().size())
+            if (first.getMatching() > second.getMatching())
                 return -1;
-            else if (first.getMatching_concepts().size() < second.getMatching_concepts().size())
-                return 1;
-            else
+            else if (first.getMatching() == second.getMatching())
                 return 0;
+            else
+                return 1;
         });
+    }
+
+    private List<Long> getMatchingSpecialitiesIds(List<Form2Response> partial_resp){
+        List<Long> spe_ids = new ArrayList<>();
+        for (Form2Response obj : partial_resp){
+            spe_ids.add(obj.getSpeciality().getId());
+        }
+        return spe_ids;
     }
 
 }

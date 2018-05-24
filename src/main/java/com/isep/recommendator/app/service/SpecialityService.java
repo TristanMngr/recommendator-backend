@@ -1,12 +1,10 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.custom_object.Form2Response;
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
-import com.isep.recommendator.app.model.Job;
-import com.isep.recommendator.app.model.Module;
-import com.isep.recommendator.app.model.Speciality;
-import com.isep.recommendator.app.model.SpecialityModule;
+import com.isep.recommendator.app.model.*;
 import com.isep.recommendator.app.repository.JobRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
@@ -16,8 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
-
 import java.util.Optional;
 
 @Service
@@ -118,5 +114,17 @@ public class SpecialityService {
         if (specialityRepository.findByName(name) != null) {
             throw new BadRequestException("Speciality with name " + name + " already exist");
         }
+    }
+
+    public List<Form2Response> getRemainingSpecialities(List<Long> excluded_ids){
+        if (excluded_ids.isEmpty())
+            return specialityRepository.getAllSpecialitiesWithNoMatchingConcepts();
+
+        return specialityRepository.getRemainingSpecialitiesAndNullMatchingConcepts(excluded_ids);
+    }
+
+    public int getMaxScore(Speciality speciality){
+        int score = specialityRepository.getMaxScore(speciality.getId());
+        return score;
     }
 }
