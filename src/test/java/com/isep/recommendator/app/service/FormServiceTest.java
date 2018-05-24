@@ -129,21 +129,21 @@ public class FormServiceTest {
         assertTrue("it should return 2 spe", list.size() == 2);
 
         assertTrue("the first spe should be spe1", list.get(0).getSpeciality().getId() == spe_one.getId());
-        assertTrue("it should have 1 modules", list.get(0).getModules().size() == 1);
+        assertTrue("it should have 1 modules", list.get(0).getMatching_modules().size() == 1);
 
-        assertTrue("the module should have 2 concepts", list.get(0).getModules().get(0).getMatching_concepts().size() == 2);
+        assertTrue("the module should have 2 concepts", list.get(0).getMatching_modules().get(0).getMatching_concepts().size() == 2);
 
         assertTrue("first concept should be concept one or two",
-                list.get(0).getModules().get(0).getMatching_concepts().get(0).getId() == concept_one.getId() ||
-                        list.get(0).getModules().get(0).getMatching_concepts().get(0).getId() ==concept_two.getId()
+                list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId() == concept_one.getId() ||
+                        list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId() ==concept_two.getId()
         );
 
         assertTrue("matching should be > 0", list.get(0).getMatching() > 0);
 
         assertTrue("second concept should be concept one or two and different from first",
-                ( list.get(0).getModules().get(0).getMatching_concepts().get(1).getId() == concept_one.getId() ||
-                        list.get(0).getModules().get(0).getMatching_concepts().get(1).getId() == concept_two.getId() ) &&
-                        list.get(0).getModules().get(0).getMatching_concepts().get(1).getId() != list.get(0).getModules().get(0).getMatching_concepts().get(0).getId()
+                ( list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() == concept_one.getId() ||
+                        list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() == concept_two.getId() ) &&
+                        list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() != list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId()
         );
 
         assertTrue("matching should be > 0", list.get(1).getMatching() > 0);
@@ -151,9 +151,9 @@ public class FormServiceTest {
         assertTrue("the second spe should be spe2", list.get(1).getSpeciality().getId() == spe_two.getId());
 
         assertTrue("it should have 1 matching concepts",
-                list.get(1).getModules().get(0).getMatching_concepts().size() == 1 && !list.get(1).getModules().get(0).getMatching_concepts().isEmpty());
+                list.get(1).getMatching_modules().get(0).getMatching_concepts().size() == 1 && !list.get(1).getMatching_modules().get(0).getMatching_concepts().isEmpty());
 
-        assertTrue("it should be concept2", list.get(1).getModules().get(0).getMatching_concepts().get(0).getId() == concept_two.getId());
+        assertTrue("it should be concept2", list.get(1).getMatching_modules().get(0).getMatching_concepts().get(0).getId() == concept_two.getId());
 
     }
 
@@ -167,7 +167,7 @@ public class FormServiceTest {
 
         assertTrue("it should return 3 spe", list.size() == 3);
         assertTrue("last spe should be spe 3", list.get(2).getSpeciality().getId() == spe_three.getId());
-        assertTrue("it shouldn't contain any matching modules", list.get(2).getModules().size() == 0);
+        assertTrue("it shouldn't contain any matching modules", list.get(2).getMatching_modules().size() == 0);
         assertTrue("last spe matching should be 0", list.get(2).getMatching() == 0);
 
         assertTrue("all three specialities should be differents",
@@ -190,9 +190,9 @@ public class FormServiceTest {
                         list.get(1).getSpeciality().getId() != list.get(2).getSpeciality().getId() &&
                         list.get(2).getSpeciality().getId() != list.get(0).getSpeciality().getId()
         );
-        assertTrue("spe 1 shouldn't contain any matching modules", list.get(0).getModules().size() == 0);
-        assertTrue("spe 2 shouldn't contain any matching modules", list.get(1).getModules().size() == 0);
-        assertTrue("spe 3 shouldn't contain any matching modules", list.get(2).getModules().size() == 0);
+        assertTrue("spe 1 shouldn't contain any matching modules", list.get(0).getMatching_modules().size() == 0);
+        assertTrue("spe 2 shouldn't contain any matching modules", list.get(1).getMatching_modules().size() == 0);
+        assertTrue("spe 3 shouldn't contain any matching modules", list.get(2).getMatching_modules().size() == 0);
     }
 
 
