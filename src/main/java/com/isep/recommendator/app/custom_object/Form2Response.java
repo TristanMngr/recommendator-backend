@@ -11,13 +11,13 @@ public class Form2Response {
     private List<ModuleWithMatchingConcepts> matching_modules;
     private int matching;
 
-    public Form2Response(Speciality speciality, Map<Long, ModuleWithMatchingConcepts> matching_modules){
+    public Form2Response(Speciality speciality, Map<Long, ModuleWithMatchingConcepts> matching_modules, int matching) {
         this.speciality = speciality;
         this.matching_modules = new ArrayList<>(matching_modules.values());
-        this.calculateMatching();
+        this.matching = matching;
     }
 
-    public Form2Response(Speciality speciality){
+    public Form2Response(Speciality speciality) {
         this.speciality = speciality;
         this.matching_modules = new ArrayList<>();
         this.matching = 0;
@@ -45,15 +45,6 @@ public class Form2Response {
 
     public void setModules(List<ModuleWithMatchingConcepts> matching_modules) {
         this.matching_modules = matching_modules;
-        this.calculateMatching();
-    }
-
-    private void calculateMatching(){
-        int score = 0;
-        for (ModuleWithMatchingConcepts m : matching_modules) {
-            score += m.getMatching_concepts().size();
-        }
-        this.matching = score;
     }
 }
 

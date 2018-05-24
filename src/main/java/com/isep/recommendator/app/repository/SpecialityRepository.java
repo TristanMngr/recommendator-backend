@@ -25,5 +25,8 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
 
     @Query("SELECT new com.isep.recommendator.app.custom_object.Form2Response(s) FROM Speciality s")
     List<Form2Response> getAllSpecialitiesWithNoMatchingConcepts();
-    
+
+    @Query("SELECT count(distinct c) FROM Speciality spe JOIN spe.specialityModules s JOIN s.module m JOIN m.concepts c WHERE spe.speciality_id = (:id)")
+    int getMaxScore(@Param("id") Long id);
+
 }

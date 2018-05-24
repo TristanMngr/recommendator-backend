@@ -4,10 +4,7 @@ import com.isep.recommendator.app.custom_object.Form2Response;
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
-import com.isep.recommendator.app.model.Job;
-import com.isep.recommendator.app.model.Module;
-import com.isep.recommendator.app.model.Speciality;
-import com.isep.recommendator.app.model.SpecialityModule;
+import com.isep.recommendator.app.model.*;
 import com.isep.recommendator.app.repository.JobRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
@@ -124,5 +121,10 @@ public class SpecialityService {
             return specialityRepository.getAllSpecialitiesWithNoMatchingConcepts();
 
         return specialityRepository.getRemainingSpecialitiesAndNullMatchingConcepts(excluded_ids);
+    }
+
+    public int getMaxScore(Speciality speciality){
+        int score = specialityRepository.getMaxScore(speciality.getId());
+        return score;
     }
 }

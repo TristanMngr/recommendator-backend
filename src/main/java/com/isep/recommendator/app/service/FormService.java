@@ -78,8 +78,20 @@ public class FormService {
 
     private void addElementToResponse(List<Form2Response> response, Speciality speciality,
                                       Map<Long, ModuleWithMatchingConcepts> modules){
-        Form2Response spe = new Form2Response(speciality, modules);
+
+        Double score = 0.0;
+        for (Map.Entry<Long, ModuleWithMatchingConcepts> m : modules.entrySet()) {
+            score += m.getValue().getMatching_concepts().size();
+        }
+        int matching = this.calculateMatchingForm2(score, speciality);
+
+        Form2Response spe = new Form2Response(speciality, modules, matching);
         response.add(spe);
+    }
+
+    protected int calculateMatchingForm2(Double score, Speciality speciality){
+        Double matching = (score / specialityService.getMaxScore(speciality)) * 100;
+        return matching.intValue();
     }
 
     // sort a list of SpecialityAndMatchingConcepts object, based on the number of matching concepts
