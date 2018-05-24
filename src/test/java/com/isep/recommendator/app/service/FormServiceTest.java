@@ -138,15 +138,17 @@ public class FormServiceTest {
                         list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId() ==concept_two.getId()
         );
 
-        assertTrue("matching should be > 0", list.get(0).getMatching() > 0);
-
+        assertTrue("matching should be > 100", list.get(0).getMatching() > 0);
+        
         assertTrue("second concept should be concept one or two and different from first",
                 ( list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() == concept_one.getId() ||
                         list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() == concept_two.getId() ) &&
                         list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() != list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId()
         );
 
-        assertTrue("matching should be > 0", list.get(1).getMatching() > 0);
+
+        System.out.println(list.get(1).getMatching());
+        assertTrue("matching should be 50", list.get(1).getMatching() == 50);
 
         assertTrue("the second spe should be spe2", list.get(1).getSpeciality().getId() == spe_two.getId());
 
@@ -185,6 +187,7 @@ public class FormServiceTest {
         List<Form2Response> list = formService.getForm2(concept_ids);
 
         assertTrue("it should return 3 spe", list.size() == 3);
+
         assertTrue("all three specialities should be differents",
                 list.get(0).getSpeciality().getId() != list.get(1).getSpeciality().getId() &&
                         list.get(1).getSpeciality().getId() != list.get(2).getSpeciality().getId() &&
