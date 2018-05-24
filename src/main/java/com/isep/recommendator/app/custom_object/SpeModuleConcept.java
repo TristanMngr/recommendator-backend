@@ -4,13 +4,13 @@ import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
 
-public class Spe_Module_Concept {
+public class SpeModuleConcept {
 
     private Speciality speciality;
     private Module module;
     private Concept concept;
 
-    public Spe_Module_Concept(Speciality speciality, Module module, Concept concept){
+    public SpeModuleConcept(Speciality speciality, Module module, Concept concept){
         this.speciality = speciality;
         this.module = module;
         this.concept = concept;

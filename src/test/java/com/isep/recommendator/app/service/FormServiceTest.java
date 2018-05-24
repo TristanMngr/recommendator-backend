@@ -1,7 +1,8 @@
 package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.Application;
-import com.isep.recommendator.app.custom_object.Form_2_Response;
+import com.isep.recommendator.app.custom_object.Form2Response;
+import com.isep.recommendator.app.custom_object.SpeModuleConcept;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
@@ -100,23 +101,22 @@ public class FormServiceTest {
         spe_two = specialityService.addModule(spe_two.getId(), module_two.getId(), false);
     }
 
-//    @Test
-//    public void getSpecialitiesAndMatchingConceptByConceptsIds(){
-//        ArrayList<Long> concept_ids = new ArrayList<>();
-//        concept_ids.add(concept_one.getId());
-//        concept_ids.add(concept_two.getId());
-//
-//        List<SpecialityAndConceptObject> resp = specialityRepository.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
-//
-//        assertTrue("should contains 3 elements", resp.size() == 3);
-//        // check the order of the list
-//        assertTrue("first et second element should have the same spe", resp.get(0).getSpeciality() == resp.get(1).getSpeciality());
-//        assertTrue("first element should be spe1", resp.get(0).getSpeciality().getId() == spe_one.getId());
-//        assertTrue("third element should be spe2", resp.get(2).getSpeciality().getId() == spe_two.getId());
-//
-//        assertTrue("every element with the same spe should have different concepts", resp.get(0).getConcept() != resp.get(1).getConcept());
-//    }
-    //TODO test request?
+    @Test
+    public void repositoryRequest(){
+        ArrayList<Long> concept_ids = new ArrayList<>();
+        concept_ids.add(concept_one.getId());
+        concept_ids.add(concept_two.getId());
+
+        List<SpeModuleConcept> resp = specialityRepository.getSpeModuleConceptByConceptIds(concept_ids);
+
+        assertTrue("should contains 3 elements", resp.size() == 3);
+        // check the order of the list
+        assertTrue("first et second element should have the same spe", resp.get(0).getSpeciality() == resp.get(1).getSpeciality());
+        assertTrue("first element should be spe1", resp.get(0).getSpeciality().getId() == spe_one.getId());
+        assertTrue("third element should be spe2", resp.get(2).getSpeciality().getId() == spe_two.getId());
+
+        assertTrue("every element with the same spe should have different concepts", resp.get(0).getConcept() != resp.get(1).getConcept());
+    }
 
     @Test
     public void getPartialResponse(){
@@ -124,7 +124,7 @@ public class FormServiceTest {
         concept_ids.add(concept_one.getId());
         concept_ids.add(concept_two.getId());
 
-        List<Form_2_Response> list = formService.getPartialResponse(concept_ids);
+        List<Form2Response> list = formService.getPartialResponse(concept_ids);
 
         assertTrue("it should return 2 spe", list.size() == 2);
 
@@ -163,7 +163,7 @@ public class FormServiceTest {
         concept_ids.add(concept_one.getId());
         concept_ids.add(concept_two.getId());
 
-        List<Form_2_Response> list = formService.getForm2(concept_ids);
+        List<Form2Response> list = formService.getForm2(concept_ids);
 
         assertTrue("it should return 3 spe", list.size() == 3);
         assertTrue("last spe should be spe 3", list.get(2).getSpeciality().getId() == spe_three.getId());
@@ -182,7 +182,7 @@ public class FormServiceTest {
         ArrayList<Long> concept_ids = new ArrayList<>();
         concept_ids.add(420000L);
 
-        List<Form_2_Response> list = formService.getForm2(concept_ids);
+        List<Form2Response> list = formService.getForm2(concept_ids);
 
         assertTrue("it should return 3 spe", list.size() == 3);
         assertTrue("all three specialities should be differents",

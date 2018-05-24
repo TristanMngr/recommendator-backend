@@ -1,6 +1,6 @@
 package com.isep.recommendator.app.service;
 
-import com.isep.recommendator.app.custom_object.Form_2_Response;
+import com.isep.recommendator.app.custom_object.Form2Response;
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
@@ -119,7 +119,7 @@ public class SpecialityService {
         }
     }
 
-    public List<Form_2_Response> getRemainingSpecialities(List<Long> excluded_ids){
+    public List<Form2Response> getRemainingSpecialities(List<Long> excluded_ids){
         if (excluded_ids.isEmpty())
             return specialityRepository.getAllSpecialitiesWithNoMatchingConcepts();
 

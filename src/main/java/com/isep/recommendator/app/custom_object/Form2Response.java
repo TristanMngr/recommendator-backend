@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Form_2_Response {
+public class Form2Response {
 
     private Speciality speciality;
     private List<ModuleWithMatchingConcepts> modules;
     private int matching;
 
-    public Form_2_Response(Speciality speciality, Map<Long, ModuleWithMatchingConcepts> modules){
+    public Form2Response(Speciality speciality, Map<Long, ModuleWithMatchingConcepts> modules){
         this.speciality = speciality;
         this.modules = new ArrayList<>(modules.values());
         this.calculateMatching();
     }
 
-    public Form_2_Response(Speciality speciality){
+    public Form2Response(Speciality speciality){
         this.speciality = speciality;
         this.modules = new ArrayList<>();
         this.matching = 0;
@@ -48,7 +48,6 @@ public class Form_2_Response {
         this.calculateMatching();
     }
 
-    //TODO prendre en compte main module
     private void calculateMatching(){
         int score = 0;
         for (ModuleWithMatchingConcepts m : modules) {
