@@ -17,9 +17,6 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
   
     Speciality findByName(String name);
 
-//    @Query("SELECT new com.isep.recommendator.app.custom_object.SpecialityAndConceptObject(spe, c) FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) ORDER BY spe.speciality_id")
-//    List<SpecialityAndConceptObject> getSpecialitiesAndMatchingConceptByConceptsIds(@Param("concept_ids")List<Long> concept_ids);
-
     @Query("SELECT new com.isep.recommendator.app.custom_object.SpeModuleConcept(spe, m, c) FROM Module m join m.specialityModules s join m.concepts c join s.speciality spe WHERE c.concept_id in (:concept_ids) ORDER BY spe.speciality_id")
     List<SpeModuleConcept> getSpeModuleConceptByConceptIds(@Param("concept_ids")List<Long> concept_ids);
 
@@ -28,10 +25,5 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
 
     @Query("SELECT new com.isep.recommendator.app.custom_object.Form2Response(s) FROM Speciality s")
     List<Form2Response> getAllSpecialitiesWithNoMatchingConcepts();
-
-//    @Query("SELECT new com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject(s) FROM Speciality s WHERE s.speciality_id NOT IN (:ids)")
-//    List<SpecialityAndMatchingConceptsObject> getRemainingSpecialitiesAndNullMatchingConcepts(@Param("ids") List<Long> ids);
-//
-//    @Query("SELECT new com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject(s) FROM Speciality s")
-//    List<SpecialityAndMatchingConceptsObject> getAllSpecialitiesWithNoMatchingConcepts();
+    
 }
