@@ -1,6 +1,6 @@
 package com.isep.recommendator.app.service;
 
-import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject;
+import com.isep.recommendator.app.custom_object.Form_2_Response;
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import java.util.Optional;
 
 @Service
@@ -122,7 +119,7 @@ public class SpecialityService {
         }
     }
 
-    public List<SpecialityAndMatchingConceptsObject> getRemainingSpecialities(List<Long> excluded_ids){
+    public List<Form_2_Response> getRemainingSpecialities(List<Long> excluded_ids){
         if (excluded_ids.isEmpty())
             return specialityRepository.getAllSpecialitiesWithNoMatchingConcepts();
 
