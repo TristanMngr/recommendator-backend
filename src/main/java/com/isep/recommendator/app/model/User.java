@@ -79,4 +79,8 @@ public class User implements Serializable {
     public void setId(Long user_id) {
         this.user_id = user_id;
     }
+
+    public String getEmployeeType() {
+        return employeeType;
+    }
 }

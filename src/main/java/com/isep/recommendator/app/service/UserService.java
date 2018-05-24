@@ -45,6 +45,19 @@ public class UserService  {
         }
     }
 
+    //TODO ajouter admin
+    /*public User createUser(String username, String password, String name, String lastName, String firstName, String type, String numero, String email) {
+        boolean isAdmin = false;
+
+        try {
+            @Valid User user = new User(username, bCryptPasswordEncoder.encode(password), isAdmin);
+            userRepo.save(user);
+            return user;
+        } catch (ConstraintViolationException e){
+            throw new CustomValidationException(e);
+        }
+    }*/
+
     //used the user who made the request in a controller
     public User getCurrentUser(Principal principal){
         return userRepo.findByUsername(principal.getName());

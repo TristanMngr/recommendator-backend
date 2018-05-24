@@ -51,6 +51,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             LDAPaccess access = new LDAPaccess();
             try {
                 User userLdap = access.LDAPget(username, password); // remplacez login par la variable qui contient le login, et mdp par la variable qui contient le mot de passe
+                System.out.println("Employee type");
+                System.out.println(userLdap.getEmployeeType());
                 System.out.println("IN ldap");
                 System.out.println(password);
                 if (userLdap == null)
@@ -63,11 +65,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
             } catch(Exception e) {
                 System.err.println(e.getMessage());
-                System.exit(1);
             }
         }
         // database
         else {
+            System.out.println("no ldap");
             grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
             if (user.isAdmin())
                 grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
