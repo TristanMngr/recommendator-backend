@@ -18,7 +18,7 @@ import java.util.*;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class, WebSecurityConfig.class})
 public class FormJobSpeServiceTest {
@@ -47,8 +47,14 @@ public class FormJobSpeServiceTest {
 
     @Before
     public void before() {
+        this.cleanDatabase();
         this.initDB();
         this.makeLinks();
+    }
+
+    private void cleanDatabase() {
+        specialityRepository.deleteAllInBatch();
+        jobRepository.deleteAll();
     }
 
     private void initDB() {
@@ -134,7 +140,7 @@ public class FormJobSpeServiceTest {
         System.out.println(specialitiesIdsMatchingJobs);
 
         assertTrue("it should contains 2 elements", specialitiesIdsMatchingJobs.size() == 2);
-        assertTrue("it should contains spe_one and spe_three", specialitiesIdsMatchingJobs.containsAll(Arrays.asList(new Long[]{1L, 3L})));
+        assertTrue("it should contains spe_one and spe_three", specialitiesIdsMatchingJobs.containsAll(Arrays.asList(new Long[]{spe_one.getId(), spe_three.getId()})));
 
         List<Long> matchingJobsIds = new ArrayList<>();
         formJobSpeService.speWithMatchOrNoMatchJob.keySet().stream()
@@ -144,7 +150,7 @@ public class FormJobSpeServiceTest {
         Collections.sort(matchingJobsIds);
 
         assertTrue("it should contains two time job_one and one time job_two",
-                matchingJobsIds.containsAll(Arrays.asList(new Long[]{1L, 1L, 2L})));
+                matchingJobsIds.containsAll(Arrays.asList(new Long[]{job_one.getId(), job_one.getId(), job_two.getId()})));
 
 
         // without matching jobs
@@ -160,7 +166,7 @@ public class FormJobSpeServiceTest {
                 .forEach(id -> specialitiesIdsNoMatchingJobs.add(id));
 
         assertTrue("it should contains 1 elements", specialitiesIdsNoMatchingJobs.size() == 1);
-        assertTrue("it should contains spe_two", specialitiesIdsNoMatchingJobs.containsAll(Arrays.asList(new Long[]{2L})));
+        assertTrue("it should contains spe_two", specialitiesIdsNoMatchingJobs.containsAll(Arrays.asList(new Long[]{spe_two.getId()})));
 
         List<Long> matchingJobsIdsNoMatchingJobs = new ArrayList<>();
         formJobSpeService.speWithMatchOrNoMatchJob.keySet().stream()
@@ -169,7 +175,7 @@ public class FormJobSpeServiceTest {
 
         Collections.sort(matchingJobsIdsNoMatchingJobs);
 
-        assertTrue("it should contains job_three", matchingJobsIdsNoMatchingJobs.containsAll(Arrays.asList(new Long[]{3L})));
+        assertTrue("it should contains job_three", matchingJobsIdsNoMatchingJobs.containsAll(Arrays.asList(new Long[]{job_three.getId()})));
 
 
 
@@ -194,23 +200,23 @@ public class FormJobSpeServiceTest {
 
         List<Long> speThreeMatchingJobs = new ArrayList<>();
         form1Responses.get(1).getSpeciality().getMatching_jobs().stream().map(Job::getId).sorted().forEach(jobId -> speThreeMatchingJobs.add(jobId));
-        assertTrue("second element should contain speciality 3 or 1", Arrays.asList(new Long[]{1L,3L}).contains(form1Responses.get(1).getSpeciality().getId()));
+        assertTrue("second element should contain speciality 3 or 1", Arrays.asList(new Long[]{spe_one.getId(),spe_three.getId()}).contains(form1Responses.get(1).getSpeciality().getId()));
         assertTrue("speciality 3 no matching jobs null", form1Responses.get(1).getSpeciality().getNo_matching_jobs() == null);
         assertTrue("speciality 3 with a match 100", form1Responses.get(1).getMatching() == 100);
 
 
         List<Long> speOneMatchingJobs = new ArrayList<>();
         form1Responses.get(0).getSpeciality().getMatching_jobs().stream().map(Job::getId).sorted().forEach(jobId -> speOneMatchingJobs.add(jobId));
-        assertTrue("first element should contain speciality 1 or 3", Arrays.asList(new Long[]{1L,3L}).contains(form1Responses.get(0).getSpeciality().getId()));
+        assertTrue("first element should contain speciality 1 or 3", Arrays.asList(new Long[]{spe_one.getId(),spe_three.getId()}).contains(form1Responses.get(0).getSpeciality().getId()));
         assertTrue("speciality 1 no matching null", form1Responses.get(0).getSpeciality().getNo_matching_jobs() == null);
         assertTrue("speciality 1 with a match 100", form1Responses.get(0).getMatching() == 100);
 
 
         List<Long> speTwoNoMatchingJobs = new ArrayList<>();
         form1Responses.get(2).getSpeciality().getNo_matching_jobs().stream().map(Job::getId).sorted().forEach(jobId -> speTwoNoMatchingJobs.add(jobId));
-        assertTrue("third element should contain speciality 2", form1Responses.get(2).getSpeciality().getId() == 2);
+        assertTrue("third element should contain speciality 2", form1Responses.get(2).getSpeciality().getId() == spe_two.getId());
         assertTrue("speciality 2 matching null", form1Responses.get(2).getSpeciality().getMatching_jobs() == null);
-        assertTrue("speciality 2 no matching job 3", speTwoNoMatchingJobs.containsAll(Arrays.asList(new Long[]{3L})));
+        assertTrue("speciality 2 no matching job 3", speTwoNoMatchingJobs.containsAll(Arrays.asList(new Long[]{job_three.getId()})));
         assertTrue("speciality 2 with a match 0", form1Responses.get(2).getMatching() == 0);
     }
 }
