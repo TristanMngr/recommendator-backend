@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Form2Response {
+public class Form2Response implements Form {
 
     private Speciality speciality;
-    private List<ModuleWithMatchingConcepts> matching_modules;
     private int matching;
+    private List<ModuleWithMatchingConcepts> matching_modules;
 
     public Form2Response(Speciality speciality, Map<Long, ModuleWithMatchingConcepts> matching_modules, int matching) {
         this.speciality = speciality;

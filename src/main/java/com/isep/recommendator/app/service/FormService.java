@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class FormService {
+public class FormService extends Utils<Form2Response> {
 
     @Autowired
     SpecialityRepository specialityRepo;
@@ -30,7 +30,7 @@ public class FormService {
     protected List<Form2Response> getPartialResponse(List<Long> concept_ids){
         List<SpeModuleConcept> query_responses = specialityRepo.getSpeModuleConceptByConceptIds(concept_ids);
         List<Form2Response> resp = this.formatMatchingSpecialities(query_responses);
-        this.sortSpecialities(resp);
+        sortWithAttributes(resp);
         return resp;
     }
 
@@ -92,18 +92,6 @@ public class FormService {
     protected int calculateMatchingForm2(Double score, Speciality speciality){
         Double matching = (score / specialityService.getMaxScore(speciality)) * 100;
         return matching.intValue();
-    }
-
-    // sort a list of SpecialityAndMatchingConcepts object, based on the number of matching concepts
-    private void sortSpecialities(List<Form2Response> list){
-        Collections.sort(list, (first, second) -> {
-            if (first.getMatching() > second.getMatching())
-                return -1;
-            else if (first.getMatching() == second.getMatching())
-                return 0;
-            else
-                return 1;
-        });
     }
 
     private List<Long> getMatchingSpecialitiesIds(List<Form2Response> partial_resp){
