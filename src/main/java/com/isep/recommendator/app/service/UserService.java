@@ -2,6 +2,7 @@ package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
+import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.User;
 import com.isep.recommendator.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Optional;
 
 @Service
 public class UserService  {
@@ -22,6 +24,14 @@ public class UserService  {
     public UserService(UserRepository userRepo, BCryptPasswordEncoder bCryptPasswordEncoder){
         this.userRepo = userRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    public User get(Long id){
+        Optional user = userRepo.findById(id);
+        if (user.isPresent())
+            return (User) user.get();
+        else
+            throw new ResourceNotFoundException("no user found with id " + id);
     }
 
     public User findByUsername(String username){

@@ -178,5 +178,7 @@ public class SpecialityControllerTest {
 
 
         //TODO verifier que la liaison est faite
-    }
+
+
+        }
 }

@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,13 +49,14 @@ public class SpecialityController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created")
     })
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Speciality create(@RequestParam(value = "name") String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
         return specialityService.create(name, description);
     }
 
 
     @GetMapping("/{speciality_id}")
-    @ApiOperation(value = "Get Speciality [ADMIN, USER]", response = Speciality.class)
+    @ApiOperation(value = "Get Speciality", response = Speciality.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK")
     })
@@ -65,9 +67,7 @@ public class SpecialityController {
 
     @DeleteMapping("/{speciality_id}")
     @ApiOperation(value = "Delete Speciality [ADMIN]", response = Speciality.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "remove speciallity")
-    })
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Speciality destroy(@PathVariable("speciality_id") Long specialityId) {
         return this.specialityService.destroy(specialityId);
     }

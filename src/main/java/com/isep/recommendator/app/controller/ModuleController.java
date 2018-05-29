@@ -70,4 +70,12 @@ public class ModuleController {
         module = moduleService.addConcept(module, concept);
         return module;
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "Delete a module [ADMIN]", notes="should be admin")
+    public Module deleteById(@PathVariable(value = "id") Long id){
+        Module module = moduleService.get(id);
+        return moduleService.delete(module);
+    }
 }

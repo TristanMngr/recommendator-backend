@@ -27,7 +27,9 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -231,6 +233,20 @@ public class ModuleControllerTest {
                 .param("concept_id", "420"))
                 .andExpect(status().isNotFound()
                 );
+    }
+
+    @Test
+    // [DELETE] /module/{id}
+    @WithMockUser(authorities = {"ADMIN" })
+    public void destroy() throws Exception {
+        Module  module   = moduleRepo.save(new Module("name", "description"));
+        Long id = module.getId();
+
+        mockMvc.perform(delete("/modules/"+id)
+                .contentType(contentType))
+                .andExpect(status().isOk());
+
+        assertFalse(this.moduleRepo.findById(id).isPresent());
     }
 
 }

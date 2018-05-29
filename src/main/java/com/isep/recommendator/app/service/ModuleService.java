@@ -54,4 +54,9 @@ public class ModuleService {
         }
     }
 
+    public Module delete(Module module){
+        moduleRepo.delete(module);
+        return module;
+    }
+
 }
