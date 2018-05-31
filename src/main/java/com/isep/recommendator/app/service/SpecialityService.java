@@ -127,4 +127,16 @@ public class SpecialityService {
         int score = specialityRepository.getMaxScore(speciality.getId());
         return score;
     }
+
+    public Speciality update(Speciality speciality, String new_name, String new_desc) throws BadRequestException{
+        if (specialityRepository.findByName(new_name) != null)
+            throw new BadRequestException("speciality with name " + new_name + " already exist");
+
+        if (!speciality.getName().equals(new_name))
+            speciality.setName(new_name);
+        if (!speciality.getDescription().equals(new_desc))
+            speciality.setDescription(new_desc);
+
+        return specialityRepository.save(speciality);
+    }
 }

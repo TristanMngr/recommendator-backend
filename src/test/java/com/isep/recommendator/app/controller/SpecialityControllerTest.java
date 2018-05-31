@@ -7,6 +7,7 @@ import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.JobRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
+import com.isep.recommendator.app.service.SpecialityService;
 import com.isep.recommendator.security.config.WebSecurityConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,16 +21,14 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.Charset;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -41,6 +40,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class SpecialityControllerTest {
     @Autowired
     SpecialityRepository specialityRepository;
+    @Autowired
+    SpecialityService specialityService;
     @Autowired
     ModuleRepository moduleRepository;
     @Autowired
@@ -181,4 +182,54 @@ public class SpecialityControllerTest {
 
 
         }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    public void updateSpeciality_OK() throws Exception {
+        String name = "nom de la spe";
+        String new_name = "nouveau nom";
+        String description = "description de la spe";
+        String new_description = "nouvelle description";
+
+        Speciality spe = specialityRepository.save(new Speciality(name, description));
+
+        assertTrue("the db should contain this spe", specialityRepository.findByName(name) != null);
+
+        mockMvc.perform(put("/specialities/"+spe.getId())
+                .contentType(contentType)
+                .param("name", new_name)
+                .param("description", new_description))
+                .andExpect(status().isOk());
+
+        assertTrue("the spe name should have been updated",
+                specialityService.getSpeciality(spe.getId()).getName().equals(new_name));
+
+        assertTrue("the spe description should have been updated",
+                specialityService.getSpeciality(spe.getId()).getDescription().equals(new_description));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void updateSpeciality_forbidden() throws Exception {
+        mockMvc.perform(put("/specialities/1")
+                .contentType(contentType)
+                .param("name", "blabla")
+                .param("description", "description"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "ADMIN"})
+    public void updateSpeciality_badRequest() throws Exception {
+        String name = "nom du spe";
+        String description = "description de la spe";
+
+        Speciality spe = specialityRepository.save(new Speciality(name, description));
+
+        mockMvc.perform(put("/specialities/1")
+                .contentType(contentType))
+                .andExpect(status().isBadRequest());
+
+        assertTrue("the spe name shouldn't have been updated", specialityService.getSpeciality(spe.getId()).getName().equals(name));
+    }
 }

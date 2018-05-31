@@ -102,4 +102,15 @@ public class SpecialityController {
     public Speciality addJob(@PathVariable("speciality_id") Long specialityId, @RequestParam("job_id") Long jobId) {
         return specialityService.addJob(specialityId, jobId);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "Update a concept [ADMIN]", notes="should be admin", response = Speciality.class)
+    public Speciality updateById(@PathVariable(value = "id") Long id, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
+        Speciality spe = specialityService.getSpeciality(id);
+        String new_name = name == null ? spe.getName() : name;
+        String new_description = description == null ? spe.getDescription() : description;
+        spe = specialityService.update(spe, new_name, new_description);
+        return spe;
+    }
 }
