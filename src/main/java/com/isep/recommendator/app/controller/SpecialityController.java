@@ -105,7 +105,7 @@ public class SpecialityController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ApiOperation(value = "Update a concept [ADMIN]", notes="should be admin", response = Speciality.class)
+    @ApiOperation(value = "Update a speciality [ADMIN]", notes="should be admin", response = Speciality.class)
     public Speciality updateById(@PathVariable(value = "id") Long id, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
         Speciality spe = specialityService.getSpeciality(id);
         String new_name = name == null ? spe.getName() : name;

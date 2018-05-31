@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.controller;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.service.ConceptService;
@@ -77,5 +78,16 @@ public class ModuleController {
     public Module deleteById(@PathVariable(value = "id") Long id){
         Module module = moduleService.get(id);
         return moduleService.delete(module);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "Update a module [ADMIN]", notes="should be admin", response = Module.class)
+    public Module updateById(@PathVariable(value = "id") Long id, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
+        Module module = moduleService.get(id);
+        String new_name = name == null ? module.getName() : name;
+        String new_description = description == null ? module.getDescription() : description;
+        module = moduleService.update(module, new_name, new_description);
+        return module;
     }
 }

@@ -29,9 +29,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -247,6 +245,41 @@ public class ModuleControllerTest {
                 .andExpect(status().isOk());
 
         assertFalse(this.moduleRepo.findById(id).isPresent());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    public void updateModule_OK() throws Exception {
+        String name = "nom de la moduel";
+        String new_name = "nouveau nombre";
+        String description = "description de la module";
+        String new_description = "nouvelle description";
+
+        Module module = moduleRepo.save(new Module(name, description));
+
+        assertTrue("the db should contain this module", moduleRepo.findByName(name) != null);
+
+        mockMvc.perform(put("/modules/"+module.getId())
+                .contentType(contentType)
+                .param("name", new_name)
+                .param("description", new_description))
+                .andExpect(status().isOk());
+
+        assertTrue("the module name should have been updated",
+                moduleService.get(module.getId()).getName().equals(new_name));
+
+        assertTrue("the module description should have been updated",
+                moduleService.get(module.getId()).getDescription().equals(new_description));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void updateModule_forbidden() throws Exception {
+        mockMvc.perform(put("/modules/1")
+                .contentType(contentType)
+                .param("name", "blabla")
+                .param("description", "description"))
+                .andExpect(status().isForbidden());
     }
 
 }

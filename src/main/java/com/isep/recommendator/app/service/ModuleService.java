@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
@@ -57,6 +58,19 @@ public class ModuleService {
     public Module delete(Module module){
         moduleRepo.delete(module);
         return module;
+    }
+
+    public Module update(Module module, String new_name, String new_desc) throws BadRequestException{
+        if (!moduleRepo.findByName(new_name).isEmpty()){
+            throw new BadRequestException("module with name " + new_name + " already exist");
+            }
+
+        if (!module.getName().equals(new_name))
+            module.setName(new_name);
+        if (!module.getDescription().equals(new_desc))
+            module.setDescription(new_desc);
+
+        return moduleRepo.save(module);
     }
 
 }
