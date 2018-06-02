@@ -109,4 +109,22 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.username", is(user.getUsername())));
     }
 
+    @Test
+    public void self() throws Exception {
+        User user = userService.createUser("user", "user", false);
+
+        String token = tokenService.buildToken(user);
+        mockMvc.perform(get("/users/self")
+                .header("Authorization", "Bearer " + token)
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())));
+
+        mockMvc.perform(get("/users/self")
+                .contentType(contentType))
+                .andExpect(status().isForbidden());
+    }
+
+
 }
