@@ -49,4 +49,12 @@ public class UserController {
             throw new AccessDeniedException("Access Denied");
     }
 
+    @GetMapping("/self")
+    @ApiOperation(value = "Get the user currently logged [PRIVATE]", response = User.class)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('USER')")
+    public User getSelf(Principal principal){
+        return userService.getCurrentUser(principal);
+    }
+
 }
