@@ -6,6 +6,7 @@ import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.JobRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import com.isep.recommendator.app.service.SpecialityService;
 import com.isep.recommendator.security.config.WebSecurityConfig;
@@ -25,10 +26,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.Charset;
 
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -40,6 +43,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class SpecialityControllerTest {
     @Autowired
     SpecialityRepository specialityRepository;
+    @Autowired
+    SpecialityModuleRepository specialityModuleRepository;
     @Autowired
     SpecialityService specialityService;
     @Autowired
@@ -232,4 +237,56 @@ public class SpecialityControllerTest {
 
         assertTrue("the spe name shouldn't have been updated", specialityService.getSpeciality(spe.getId()).getName().equals(name));
     }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "ADMIN"})
+    public void deleteModuleFromSpe() throws Exception {
+        Speciality spe = specialityRepository.save(new Speciality("spe", "spe"));
+        Module module = moduleRepository.save(new Module("module", "module"));
+        Module module_two = moduleRepository.save(new Module("module2", "module2"));
+        spe = specialityService.addModule(spe.getId(), module.getId(), false);
+
+
+        assertTrue("the spe should contains a module", spe.getSpecialityModules().size() == 1);
+
+        mockMvc.perform(delete("/specialities/"+spe.getId()+"/modules/"+module.getId())
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.specialityModules", empty()));
+
+        Speciality speciality = specialityService.getSpeciality(spe.getId());
+        assertTrue("the spe shouldn't contains any modules", speciality.getSpecialityModules().size() == 0);
+
+
+        mockMvc.perform(delete("/specialities/"+spe.getId()+"/modules/"+ module_two.getId())
+                .contentType(contentType))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "ADMIN"})
+    public void switchIsMain() throws Exception {
+        Speciality spe = specialityRepository.save(new Speciality("spe", "spe"));
+        Module module = moduleRepository.save(new Module("module", "module"));
+        Module module_two = moduleRepository.save(new Module("module2", "module2"));
+        spe = specialityService.addModule(spe.getId(), module.getId(), true);
+
+        assertTrue("the module should be main in this spe",
+                specialityModuleRepository.findBySpecialitiesIds(spe.getId(), module.getId()).isMainModule());
+
+        mockMvc.perform(put("/specialities/"+spe.getId()+"/modules/"+module.getId())
+                .contentType(contentType)
+                .param("is_main", "false"))
+                .andExpect(jsonPath("$.specialityModules[0].mainModule", is(false)))
+                .andExpect(status().isOk());
+
+        assertTrue("the module should not be main in this spe",
+                !specialityModuleRepository.findBySpecialitiesIds(spe.getId(), module.getId()).isMainModule());
+
+        mockMvc.perform(put("/specialities/"+spe.getId()+"/modules/"+module_two.getId())
+                .contentType(contentType)
+                .param("is_main", "false"))
+                .andExpect(status().isBadRequest());
+    }
+
 }

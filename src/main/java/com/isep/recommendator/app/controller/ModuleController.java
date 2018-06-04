@@ -90,4 +90,14 @@ public class ModuleController {
         module = moduleService.update(module, new_name, new_description);
         return module;
     }
+
+    @DeleteMapping("/{id}/concepts/{concept_id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "remove a concept from a module [ADMIN]", notes = "should be admin", response = Module.class)
+    @ResponseStatus(HttpStatus.OK)
+    public Module removeConcept(@PathVariable(value = "id") Long module_id, @PathVariable("concept_id") Long concept_id) throws BadRequestException {
+        Module module = moduleService.get(module_id);
+        Concept concept = conceptService.get(concept_id);
+        return moduleService.removeConcept(module, concept);
+    }
 }

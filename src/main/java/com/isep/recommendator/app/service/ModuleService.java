@@ -45,6 +45,15 @@ public class ModuleService {
         return moduleRepo.save(module);
     }
 
+    public Module removeConcept(Module module, Concept concept) throws BadRequestException {
+        if (!module.getConcepts().contains(concept))
+            throw new BadRequestException("concept with id "+ concept.getId() + " isn't in module with id " + module.getId());
+
+        concept.getModules().remove(module);
+        module.getConcepts().remove(concept);
+        return moduleRepo.save(module);
+    }
+
     public Module create(String name, String description){
         try {
             @Valid Module user = new Module(name, description);

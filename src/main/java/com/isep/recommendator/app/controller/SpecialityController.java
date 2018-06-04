@@ -113,4 +113,20 @@ public class SpecialityController {
         spe = specialityService.update(spe, new_name, new_description);
         return spe;
     }
+
+    @DeleteMapping("/{id}/modules/{module_id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "delete a module from a speciality [ADMIN]", notes="should be admin", response = Speciality.class)
+    public Speciality deleteModuleFromSpeciality(@PathVariable(value = "id") Long id, @PathVariable(value = "module_id") Long module_id) throws BadRequestException {
+        return specialityService.removeModule(id, module_id);
+    }
+
+    @PutMapping("/{id}/modules/{module_id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "delete a module from a speciality [ADMIN]", notes="should be admin", response = Speciality.class)
+    public Speciality switchIsMainModule(@PathVariable(value = "id") Long id, @PathVariable(value = "module_id") Long module_id,
+       @RequestParam(value = "is_main", required = false) Boolean is_main) throws BadRequestException {
+        return specialityService.setIsMain(id, module_id, is_main);
+    }
+
 }

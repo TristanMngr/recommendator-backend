@@ -7,6 +7,7 @@ import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.*;
 import com.isep.recommendator.app.repository.JobRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,15 @@ public class SpecialityService {
     private SpecialityRepository specialityRepository;
     private ModuleRepository     moduleRepository;
     private JobRepository        jobRepository;
+    private SpecialityModuleRepository specialityModuleRepository;
 
     @Autowired
-    public SpecialityService(SpecialityRepository specialityRepository, ModuleRepository moduleRepository, JobRepository jobRepository) {
+    public SpecialityService(SpecialityRepository specialityRepository, ModuleRepository moduleRepository, JobRepository jobRepository,
+                             SpecialityModuleRepository specialityModuleRepository) {
         this.specialityRepository = specialityRepository;
         this.moduleRepository = moduleRepository;
         this.jobRepository = jobRepository;
+        this.specialityModuleRepository = specialityModuleRepository;
     }
 
     public Speciality create(String name, String description) throws BadRequestException {
@@ -69,6 +73,30 @@ public class SpecialityService {
         specialityRepository.save(speciality);
 
         return speciality;
+    }
+
+    private SpecialityModule getSpecialityModuleLink(Long specialityId, Long moduleId) throws BadRequestException {
+        SpecialityModule link = specialityModuleRepository.findBySpecialitiesIds(specialityId, moduleId);
+        if (link == null)
+            throw new BadRequestException("module with id "+ moduleId + " isn't in speciality with id " + specialityId);
+
+        return link;
+    }
+
+    public Speciality removeModule(Long specialityId, Long moduleId) throws ResourceNotFoundException, BadRequestException {
+        SpecialityModule link = this.getSpecialityModuleLink(specialityId, moduleId);
+        Speciality speciality = specialityFound(specialityId);
+        speciality.getSpecialityModules().remove(link);
+        specialityModuleRepository.delete(link);
+
+        return this.getSpeciality(specialityId);
+    }
+
+    public Speciality setIsMain(Long specialityId, Long moduleId, Boolean is_main) throws BadRequestException {
+        SpecialityModule link = this.getSpecialityModuleLink(specialityId, moduleId);
+        link.setMainModule(is_main);
+        specialityModuleRepository.save(link);
+        return this.specialityFound(specialityId);
     }
 
     public Speciality addJob(Long specialityId, Long jobId) throws ResourceNotFoundException {

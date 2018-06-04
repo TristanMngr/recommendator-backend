@@ -3,6 +3,7 @@ package com.isep.recommendator.app.controller;
 import com.isep.recommendator.app.Application;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
+import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.service.ConceptService;
@@ -26,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
@@ -280,6 +282,31 @@ public class ModuleControllerTest {
                 .param("name", "blabla")
                 .param("description", "description"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    public void deleteConceptFromModule() throws Exception {
+        Module module = moduleRepo.save(new Module("module", "module"));
+        Concept concept_one = conceptRepo.save(new Concept("concept1"));
+        Concept concept_two = conceptRepo.save(new Concept("concept2"));
+        module = moduleService.addConcept(module, concept_one);
+
+        assertTrue("the module should contains a concept", module.getConcepts().size() == 1);
+
+        mockMvc.perform(delete("/modules/"+module.getId()+"/concepts/"+concept_one.getId())
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.concepts", empty()));
+
+        Module mod = moduleService.get(module.getId());
+        assertTrue("the module shouldn't contains any concepts", mod.getConcepts().size() == 0);
+
+
+        mockMvc.perform(delete("/modules/"+module.getId()+"/concepts/"+concept_two.getId())
+                .contentType(contentType))
+                .andExpect(status().isBadRequest());
+
     }
 
 }
