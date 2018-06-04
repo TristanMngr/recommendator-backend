@@ -114,6 +114,24 @@ public class SpecialityService {
         return speciality;
     }
 
+    public Speciality removeJob(Long specialityId, Long jobId) throws ResourceNotFoundException, BadRequestException {
+        Optional<Job>        job        = jobRepository.findById(jobId);
+        Speciality speciality = specialityFound(specialityId);
+
+        if (!job.isPresent()) {
+            throw new ResourceNotFoundException("Job with id " + jobId + " does not exist");
+        }
+
+        if (!speciality.getJobs().contains(job.get()))
+            throw new BadRequestException("job with id "+ jobId + " isn't in speciality with id " + specialityId);
+
+        speciality.getJobs().remove(job.get());
+        job.get().getSpecialities().remove(speciality);
+        specialityRepository.save(speciality);
+
+        return speciality;
+    }
+
     public List<Speciality> getAll() {
         return specialityRepository.findAll();
     }

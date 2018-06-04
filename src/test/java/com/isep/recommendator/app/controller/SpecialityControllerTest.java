@@ -265,6 +265,30 @@ public class SpecialityControllerTest {
 
     @Test
     @WithMockUser(authorities = {"USER", "ADMIN"})
+    public void deleteJobFromSpe() throws Exception {
+        Speciality spe = specialityRepository.save(new Speciality("spe", "spe"));
+        Job job1 = jobRepository.save(new Job("job1"));
+        Job job2 = jobRepository.save(new Job("job2"));
+        spe = specialityService.addJob(spe.getId(), job1.getId());
+
+        assertTrue("the spe should contains a job", spe.getJobs().size() == 1);
+
+        mockMvc.perform(delete("/specialities/"+spe.getId()+"/jobs/"+job1.getId())
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jobs", empty()));
+
+        Speciality speciality = specialityService.getSpeciality(spe.getId());
+        assertTrue("the spe shouldn't contains any jobs", speciality.getJobs().size() == 0);
+
+
+        mockMvc.perform(delete("/specialities/"+spe.getId()+"/jobs/"+ job2.getId())
+                .contentType(contentType))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "ADMIN"})
     public void switchIsMain() throws Exception {
         Speciality spe = specialityRepository.save(new Speciality("spe", "spe"));
         Module module = moduleRepository.save(new Module("module", "module"));

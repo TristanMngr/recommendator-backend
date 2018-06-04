@@ -20,7 +20,7 @@ public class Speciality {
 
     private String description;
 
-    @ManyToMany(mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Job> jobs = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "speciality", cascade = CascadeType.ALL)
