@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,6 +66,9 @@ public class ModuleService {
     }
 
     public Module delete(Module module){
+        for (Concept concept : module.getConcepts()) {
+            concept.getModules().remove(module);
+        }
         moduleRepo.delete(module);
         return module;
     }
