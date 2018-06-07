@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class JobController {
 
 
     @GetMapping("")
-    @ApiOperation(value = "Get all jobs [USER]", response = Job.class, responseContainer = "List")
+    @ApiOperation(value = "Get all job", response = Job.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK")
     })
@@ -48,6 +49,7 @@ public class JobController {
             @ApiResponse(code = 201, message = "Created")
     })
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Job create(@RequestParam("name") String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
         return jobService.create(name, description);
     }

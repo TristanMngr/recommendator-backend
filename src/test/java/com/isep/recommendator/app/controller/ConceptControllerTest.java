@@ -171,7 +171,7 @@ public class ConceptControllerTest {
 
         mockMvc.perform(delete("/concepts/"+concept.getId())
                 .contentType(contentType))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         assertTrue("the db should not contain this concept anymore", conceptRepo.findByName(name) == null);
     }
