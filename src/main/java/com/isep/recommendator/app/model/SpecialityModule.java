@@ -20,7 +20,6 @@ public class SpecialityModule {
 
     @ManyToOne
     @JoinColumn(name = "module_id")
-    @JsonBackReference
     private Module module;
 
     @Column(name = "main_module")

@@ -20,9 +20,7 @@ public class Speciality {
 
     private String description;
 
-    @JsonBackReference
-    @ManyToMany(mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Job> jobs = new HashSet<>();
 
     @JsonBackReference

@@ -8,6 +8,7 @@ import com.isep.recommendator.app.model.*;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.JobRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityModuleRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,15 @@ public class SpecialityService {
     private SpecialityRepository specialityRepository;
     private ModuleRepository     moduleRepository;
     private JobRepository        jobRepository;
+    private SpecialityModuleRepository specialityModuleRepository;
 
     @Autowired
-    public SpecialityService(SpecialityRepository specialityRepository, ModuleRepository moduleRepository, JobRepository jobRepository) {
+    public SpecialityService(SpecialityRepository specialityRepository, ModuleRepository moduleRepository, JobRepository jobRepository,
+                             SpecialityModuleRepository specialityModuleRepository) {
         this.specialityRepository = specialityRepository;
         this.moduleRepository = moduleRepository;
         this.jobRepository = jobRepository;
+        this.specialityModuleRepository = specialityModuleRepository;
     }
 
     public Speciality create(String name, String description) throws BadRequestException {
@@ -72,6 +76,30 @@ public class SpecialityService {
         return speciality;
     }
 
+    private SpecialityModule getSpecialityModuleLink(Long specialityId, Long moduleId) throws BadRequestException {
+        SpecialityModule link = specialityModuleRepository.findBySpecialitiesIds(specialityId, moduleId);
+        if (link == null)
+            throw new BadRequestException("module with id "+ moduleId + " isn't in speciality with id " + specialityId);
+
+        return link;
+    }
+
+    public Speciality removeModule(Long specialityId, Long moduleId) throws ResourceNotFoundException, BadRequestException {
+        SpecialityModule link = this.getSpecialityModuleLink(specialityId, moduleId);
+        Speciality speciality = specialityFound(specialityId);
+        speciality.getSpecialityModules().remove(link);
+        specialityModuleRepository.delete(link);
+
+        return this.getSpeciality(specialityId);
+    }
+
+    public Speciality setIsMain(Long specialityId, Long moduleId, Boolean is_main) throws BadRequestException {
+        SpecialityModule link = this.getSpecialityModuleLink(specialityId, moduleId);
+        link.setMainModule(is_main);
+        specialityModuleRepository.save(link);
+        return this.specialityFound(specialityId);
+    }
+
     public Speciality addJob(Long specialityId, Long jobId) throws ResourceNotFoundException {
         Optional<Job>        job        = jobRepository.findById(jobId);
         Speciality speciality = specialityFound(specialityId);
@@ -82,6 +110,24 @@ public class SpecialityService {
 
         speciality.getJobs().add(job.get());
         job.get().getSpecialities().add(speciality);
+        specialityRepository.save(speciality);
+
+        return speciality;
+    }
+
+    public Speciality removeJob(Long specialityId, Long jobId) throws ResourceNotFoundException, BadRequestException {
+        Optional<Job>        job        = jobRepository.findById(jobId);
+        Speciality speciality = specialityFound(specialityId);
+
+        if (!job.isPresent()) {
+            throw new ResourceNotFoundException("Job with id " + jobId + " does not exist");
+        }
+
+        if (!speciality.getJobs().contains(job.get()))
+            throw new BadRequestException("job with id "+ jobId + " isn't in speciality with id " + specialityId);
+
+        speciality.getJobs().remove(job.get());
+        job.get().getSpecialities().remove(speciality);
         specialityRepository.save(speciality);
 
         return speciality;
@@ -127,5 +173,17 @@ public class SpecialityService {
     public int getMaxScore(Speciality speciality){
         int score = specialityRepository.getMaxScore(speciality.getId());
         return score;
+    }
+
+    public Speciality update(Speciality speciality, String new_name, String new_desc) throws BadRequestException{
+        if (specialityRepository.findByName(new_name) != null)
+            throw new BadRequestException("speciality with name " + new_name + " already exist");
+
+        if (!speciality.getName().equals(new_name))
+            speciality.setName(new_name);
+        if (!speciality.getDescription().equals(new_desc))
+            speciality.setDescription(new_desc);
+
+        return specialityRepository.save(speciality);
     }
 }

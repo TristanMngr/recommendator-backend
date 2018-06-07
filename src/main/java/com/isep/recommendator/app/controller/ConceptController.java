@@ -54,11 +54,9 @@ public class ConceptController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @ApiOperation(value = "Delete a concept [ADMIN]", notes="should be admin")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable(value = "id") Long id){
+    public Concept deleteById(@PathVariable(value = "id") Long id){
         Concept concept = conceptService.get(id);
-        conceptService.delete(concept);
-        return;
+        return conceptService.delete(concept);
     }
 
     @PutMapping("/{id}")
