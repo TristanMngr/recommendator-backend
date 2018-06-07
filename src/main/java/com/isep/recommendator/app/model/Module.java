@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "module")
 public class Module implements Serializable {
-    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "module", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JsonBackReference
     private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
 

@@ -24,7 +24,7 @@ public class Speciality {
     private Set<Job> jobs = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "speciality", cascade = CascadeType.ALL)
-    private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
+    private Set<SpecialityModule> specialityModules = new HashSet<>();
 
     public Speciality() {
     }

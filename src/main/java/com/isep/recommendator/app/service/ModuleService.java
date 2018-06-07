@@ -7,25 +7,27 @@ import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ModuleService {
 
-    private final ModuleRepository moduleRepo;
-    private final ConceptRepository conceptRepo;
+    private final ModuleRepository           moduleRepo;
+    private final ConceptRepository          conceptRepo;
+    private final SpecialityModuleRepository specialityModuleRepository;
 
     @Autowired
-    public ModuleService(ModuleRepository moduleRepo, ConceptRepository conceptRepo){
+    public ModuleService(ModuleRepository moduleRepo, ConceptRepository conceptRepo, SpecialityModuleRepository specialityModuleRepository){
         this.moduleRepo = moduleRepo;
         this.conceptRepo = conceptRepo;
+        this.specialityModuleRepository = specialityModuleRepository;
     }
 
     public Module get(Long id){
@@ -66,10 +68,16 @@ public class ModuleService {
     }
 
     public Module delete(Module module){
+        // du coup j'ai fait une query j'avais trop de galère à le faire de manière classique
+        // mais je pense que c'est pas plus mal, on boucle pas comme ça
+        specialityModuleRepository.deleteSpecialityModuleByModuleId(module.getId());
+
         for (Concept concept : module.getConcepts()) {
             concept.getModules().remove(module);
         }
+
         moduleRepo.delete(module);
+
         return module;
     }
 
