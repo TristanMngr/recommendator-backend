@@ -3,6 +3,7 @@ package com.isep.recommendator.app.controller;
 import com.isep.recommendator.app.Application;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
+import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
 import com.isep.recommendator.app.service.ConceptService;
@@ -26,10 +27,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -231,6 +233,80 @@ public class ModuleControllerTest {
                 .param("concept_id", "420"))
                 .andExpect(status().isNotFound()
                 );
+    }
+
+    @Test
+    // [DELETE] /module/{id}
+    @WithMockUser(authorities = {"ADMIN" })
+    public void destroy() throws Exception {
+        Module  module   = moduleRepo.save(new Module("name", "description"));
+        Long id = module.getId();
+
+        mockMvc.perform(delete("/modules/"+id)
+                .contentType(contentType))
+                .andExpect(status().isOk());
+
+        assertFalse(this.moduleRepo.findById(id).isPresent());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    public void updateModule_OK() throws Exception {
+        String name = "nom de la moduel";
+        String new_name = "nouveau nombre";
+        String description = "description de la module";
+        String new_description = "nouvelle description";
+
+        Module module = moduleRepo.save(new Module(name, description));
+
+        assertTrue("the db should contain this module", moduleRepo.findByName(name) != null);
+
+        mockMvc.perform(put("/modules/"+module.getId())
+                .contentType(contentType)
+                .param("name", new_name)
+                .param("description", new_description))
+                .andExpect(status().isOk());
+
+        assertTrue("the module name should have been updated",
+                moduleService.get(module.getId()).getName().equals(new_name));
+
+        assertTrue("the module description should have been updated",
+                moduleService.get(module.getId()).getDescription().equals(new_description));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void updateModule_forbidden() throws Exception {
+        mockMvc.perform(put("/modules/1")
+                .contentType(contentType)
+                .param("name", "blabla")
+                .param("description", "description"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER" , "ADMIN"})
+    public void deleteConceptFromModule() throws Exception {
+        Module module = moduleRepo.save(new Module("module", "module"));
+        Concept concept_one = conceptRepo.save(new Concept("concept1"));
+        Concept concept_two = conceptRepo.save(new Concept("concept2"));
+        module = moduleService.addConcept(module, concept_one);
+
+        assertTrue("the module should contains a concept", module.getConcepts().size() == 1);
+
+        mockMvc.perform(delete("/modules/"+module.getId()+"/concepts/"+concept_one.getId())
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.concepts", empty()));
+
+        Module mod = moduleService.get(module.getId());
+        assertTrue("the module shouldn't contains any concepts", mod.getConcepts().size() == 0);
+
+
+        mockMvc.perform(delete("/modules/"+module.getId()+"/concepts/"+concept_two.getId())
+                .contentType(contentType))
+                .andExpect(status().isBadRequest());
+
     }
 
 }

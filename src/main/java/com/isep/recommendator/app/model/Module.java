@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Table(name = "module")
 public class Module implements Serializable {
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
+    @JsonBackReference
     private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
 
     @Id

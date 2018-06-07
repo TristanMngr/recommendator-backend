@@ -1,5 +1,6 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +46,15 @@ public class ModuleService {
         return moduleRepo.save(module);
     }
 
+    public Module removeConcept(Module module, Concept concept) throws BadRequestException {
+        if (!module.getConcepts().contains(concept))
+            throw new BadRequestException("concept with id "+ concept.getId() + " isn't in module with id " + module.getId());
+
+        concept.getModules().remove(module);
+        module.getConcepts().remove(concept);
+        return moduleRepo.save(module);
+    }
+
     public Module create(String name, String description){
         try {
             @Valid Module user = new Module(name, description);
@@ -52,6 +63,27 @@ public class ModuleService {
         } catch (ConstraintViolationException e){
             throw new CustomValidationException(e);
         }
+    }
+
+    public Module delete(Module module){
+        for (Concept concept : module.getConcepts()) {
+            concept.getModules().remove(module);
+        }
+        moduleRepo.delete(module);
+        return module;
+    }
+
+    public Module update(Module module, String new_name, String new_desc) throws BadRequestException{
+        if (!moduleRepo.findByName(new_name).isEmpty()){
+            throw new BadRequestException("module with name " + new_name + " already exist");
+            }
+
+        if (!module.getName().equals(new_name))
+            module.setName(new_name);
+        if (!module.getDescription().equals(new_desc))
+            module.setDescription(new_desc);
+
+        return moduleRepo.save(module);
     }
 
 }

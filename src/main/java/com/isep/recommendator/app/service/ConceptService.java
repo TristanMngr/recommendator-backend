@@ -49,8 +49,9 @@ public class ConceptService {
     }
 
 
-    public void delete(Concept concept){
+    public Concept delete(Concept concept){
         conceptRepo.delete(concept);
+        return concept;
     }
 
     public Concept update(Concept concept, String new_name) throws BadRequestException{
