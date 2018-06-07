@@ -1,9 +1,6 @@
 package com.isep.recommendator.app.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
@@ -22,7 +19,6 @@ public class SpecialityModule {
     private Speciality speciality;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "module_id")
     private Module module;
 
