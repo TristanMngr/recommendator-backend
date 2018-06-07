@@ -1,6 +1,8 @@
 package com.isep.recommendator.app.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -24,7 +26,7 @@ public class Speciality {
     private Set<Job> jobs = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "speciality", cascade = CascadeType.ALL)
-    private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
+    private Set<SpecialityModule> specialityModules = new HashSet<>();
 
     public Speciality() {
     }

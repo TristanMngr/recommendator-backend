@@ -5,8 +5,14 @@ import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
+import com.isep.recommendator.app.model.Speciality;
+import com.isep.recommendator.app.model.SpecialityModule;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityRepository;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +25,15 @@ import java.util.Optional;
 @Service
 public class ModuleService {
 
-    private final ModuleRepository moduleRepo;
-    private final ConceptRepository conceptRepo;
+    private final ModuleRepository           moduleRepo;
+    private final ConceptRepository          conceptRepo;
+    private final SpecialityModuleRepository specialityModuleRepository;
 
     @Autowired
-    public ModuleService(ModuleRepository moduleRepo, ConceptRepository conceptRepo){
+    public ModuleService(ModuleRepository moduleRepo, ConceptRepository conceptRepo, SpecialityModuleRepository specialityModuleRepository){
         this.moduleRepo = moduleRepo;
         this.conceptRepo = conceptRepo;
+        this.specialityModuleRepository = specialityModuleRepository;
     }
 
     public Module get(Long id){
@@ -66,10 +74,16 @@ public class ModuleService {
     }
 
     public Module delete(Module module){
+        specialityModuleRepository.deleteSpecialityModuleByModuleId(module.getId());
+
+        specialityModuleRepository.findAll().forEach(s -> System.out.println(s.getModule().getId()));
+
         for (Concept concept : module.getConcepts()) {
             concept.getModules().remove(module);
         }
+
         moduleRepo.delete(module);
+
         return module;
     }
 

@@ -71,6 +71,7 @@ public class SpecialityService {
         }
 
         speciality.getSpecialityModules().add(new SpecialityModule(speciality, module.get(), isMain));
+
         specialityRepository.save(speciality);
 
         return speciality;

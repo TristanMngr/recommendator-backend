@@ -12,7 +12,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="my-app" target="1.8" />
-      <module name="recommendator" target="1.8" />
+      <module name="recommendator" target="9" />
     </bytecodeTargetLevel>
   </component>
 </project>
