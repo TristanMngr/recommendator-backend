@@ -20,6 +20,7 @@ public class Job {
 
     private String description;
 
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonBackReference
     @JoinTable(
