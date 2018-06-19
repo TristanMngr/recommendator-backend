@@ -48,9 +48,7 @@ public class FormService extends Utils<Form2Response> {
                 list_modulesAndconcepts = new HashMap<>();
             }
 
-            // list_concepts.add(query.getConcept());
             this.formatModuleWithMatchingConcepts(list_modulesAndconcepts, query);
-
 
             // si c'est la derniere itération
             if (to_format.indexOf(query) == to_format.size()-1){
@@ -79,10 +77,7 @@ public class FormService extends Utils<Form2Response> {
     private void addElementToResponse(List<Form2Response> response, Speciality speciality,
                                       Map<Long, ModuleWithMatchingConcepts> modules){
 
-        Double score = 0.0;
-        for (Map.Entry<Long, ModuleWithMatchingConcepts> m : modules.entrySet()) {
-            score += m.getValue().getMatching_concepts().size();
-        }
+        Double score = specialityService.getScore(speciality, modules);
         int matching = this.calculateMatchingForm2(score, speciality);
 
         Form2Response spe = new Form2Response(speciality, modules, matching);
