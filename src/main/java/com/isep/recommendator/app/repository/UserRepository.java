@@ -17,10 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 
 
-    @Query("SELECT u, h FROM u JOIN u.histories h WHERE u.user_id = :userId AND h.history_id = :historyId")
+    @Query("SELECT u, h FROM User u JOIN u.histories h WHERE u.user_id = :userId AND h.history_id = :historyId")
     History getHistoryByUser(@Param("userId") Long user_id, @Param("historyId") Long history_id);
 
-    @Query("SELECT u, h FROM u JOIN u.histories h WHERE u.user_id = :userId")
+    @Query("SELECT u, h FROM User u JOIN u.histories h WHERE u.user_id = :userId")
     List<History> getAllHistoriesByUser(@Param("userId") Long user_id);
 
 }
