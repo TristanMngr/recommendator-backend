@@ -15,6 +15,7 @@ import java.util.List;
 public interface JobRepository extends JpaRepository<Job, Long> {
     Job findByName(String name);
 
+    List<Job> findListByName(String name);
     // j'ai mis un order by juste pour les tests, pour l'algo il sert à rien, je ferais gaffe pour la
     // prochaine fois
     @Query(value = "SELECT s, j " +

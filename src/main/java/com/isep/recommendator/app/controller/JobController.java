@@ -2,6 +2,7 @@ package com.isep.recommendator.app.controller;
 
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.model.Job;
+import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.service.JobService;
 import io.swagger.annotations.Api;
@@ -86,5 +87,16 @@ public class JobController {
     @ResponseStatus(HttpStatus.OK)
     public List<Speciality> getSpecialities(@PathVariable(value = "job_ids") List<Long> jobIds) {
         return jobService.getSpecialitiesByJobsIds(jobIds);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "Update a job [ADMIN]", notes="should be admin", response = Job.class)
+    public Job updateById(@PathVariable(value = "id") Long id, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
+        Job job = jobService.getJob(id);
+        String new_name = name == null ? job.getName() : name;
+        String new_description = description == null ? job.getDescription() : description;
+        job = jobService.update(job, new_name, new_description);
+        return job;
     }
 }

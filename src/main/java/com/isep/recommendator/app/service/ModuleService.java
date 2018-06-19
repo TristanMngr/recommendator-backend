@@ -82,12 +82,11 @@ public class ModuleService {
     }
 
     public Module update(Module module, String new_name, String new_desc) throws BadRequestException{
-        if (!moduleRepo.findByName(new_name).isEmpty()){
-            throw new BadRequestException("module with name " + new_name + " already exist");
-            }
-
-        if (!module.getName().equals(new_name))
+        if (!module.getName().equals(new_name)) {
+            if (!moduleRepo.findByName(new_name).isEmpty())
+                throw new BadRequestException("module with name " + new_name + " already exist");
             module.setName(new_name);
+        }
         if (!module.getDescription().equals(new_desc))
             module.setDescription(new_desc);
 
