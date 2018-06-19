@@ -176,11 +176,11 @@ public class SpecialityService {
     }
 
     public Speciality update(Speciality speciality, String new_name, String new_desc) throws BadRequestException{
-        if (specialityRepository.findByName(new_name) != null)
-            throw new BadRequestException("speciality with name " + new_name + " already exist");
-
-        if (!speciality.getName().equals(new_name))
+        if (!speciality.getName().equals(new_name)) {
+            if (specialityRepository.findByName(new_name) != null)
+                throw new BadRequestException("speciality with name " + new_name + " already exist");
             speciality.setName(new_name);
+        }
         if (!speciality.getDescription().equals(new_desc))
             speciality.setDescription(new_desc);
 

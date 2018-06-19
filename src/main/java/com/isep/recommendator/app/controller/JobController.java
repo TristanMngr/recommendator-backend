@@ -12,10 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -86,5 +82,16 @@ public class JobController {
     @ResponseStatus(HttpStatus.OK)
     public List<Speciality> getSpecialities(@PathVariable(value = "job_ids") List<Long> jobIds) {
         return jobService.getSpecialitiesByJobsIds(jobIds);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "Update a job [ADMIN]", notes="should be admin", response = Job.class)
+    public Job updateById(@PathVariable(value = "id") Long id, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
+        Job job = jobService.getJob(id);
+        String new_name = name == null ? job.getName() : name;
+        String new_description = description == null ? job.getDescription() : description;
+        job = jobService.update(job, new_name, new_description);
+        return job;
     }
 }
