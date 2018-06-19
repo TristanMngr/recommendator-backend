@@ -42,7 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
     }
 
-    public UserDetails loadUserByUsername(String username, String password) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username, String password) {
         User user = userService.findByUsername(username);
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
@@ -50,34 +50,19 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             LDAPaccess access = new LDAPaccess();
             try {
+                boolean isAdmin = false;
                 User userLdap = access.LDAPget(username, password); // remplacez login par la variable qui contient le login, et mdp par la variable qui contient le mot de passe
-                System.out.println("Employee type");
-                System.out.println(userLdap.getEmployeeType());
-                System.out.println("IN ldap");
-                System.out.println(password);
-                if (userLdap == null)
-                {
-                    System.out.println("login invalide");
-                    throw new UsernameNotFoundException("username not found");
-                }
-                System.out.println(userLdap.toString());
-                user = userService.createUser(username, password, true);
-                grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
-            } catch(Exception e) {
-                System.err.println(e.getMessage());
+                isAdmin = !userLdap.getEmployeeType().equals("eleve");
+                user = userService.createUser(username, password, isAdmin);
+            } catch(UsernameNotFoundException e) {
+                throw new UsernameNotFoundException("Username not found");
             }
         }
-        // database
-        else {
-            System.out.println("no ldap");
-            grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
-            if (user.isAdmin())
-                grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-        }
 
-        System.out.println(user.getUsername());
-        System.out.println(user.getPassword());
+        grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
+        if (user.isAdmin())
+            grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
+
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
     }
-
 }

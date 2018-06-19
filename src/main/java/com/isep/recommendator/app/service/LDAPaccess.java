@@ -1,6 +1,7 @@
 package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.model.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.io.Serializable;
 import java.util.Hashtable;
@@ -30,7 +31,7 @@ public class LDAPaccess implements Serializable
      * @throws Exception
      */
 
-    public User LDAPget(String user, String mdp) throws Exception
+    public User LDAPget(String user, String mdp) throws UsernameNotFoundException
     {
 //		System.out.println(user + " " + mdp);
         // Initial context implementation
@@ -111,7 +112,7 @@ public class LDAPaccess implements Serializable
         } catch (Exception e)
         {
             System.err.println(e);
-            throw (new Exception(messageErreur));
+            throw (new UsernameNotFoundException(e.getMessage()));
         }
 
         User reponse = new User(login, mdp, nom, nomFamille, prenom, type, employeeNumber, mail);
