@@ -1,9 +1,8 @@
 package com.isep.recommendator.app.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "requirement")
@@ -14,22 +13,35 @@ public class Requirement {
 
     @ManyToOne
     @JoinColumn(name = "concept_id")
-    @JsonBackReference
     private Concept concept;
 
     @NotBlank
-    @Column(unique = true)
     private String note_type;
 
-    @NotBlank
-    private int note;
+    @NotNull
+    private Integer note;
+
+    private String mooc;
 
     private String question;
 
-    public Requirement(Concept concept, @NotBlank String note_type, @NotBlank int note) {
+    public Requirement(@NotBlank Concept concept, @NotBlank String note_type, @NotNull Integer note, String mooc, String question) {
         this.concept = concept;
         this.note_type = note_type;
         this.note = note;
+        this.mooc = mooc;
+        this.question = question;
+    }
+
+    public Requirement() {
+    }
+
+    public String getMooc() {
+        return mooc;
+    }
+
+    public void setMooc(String mooc) {
+        this.mooc = mooc;
     }
 
     public Long getRequirement_id() {
@@ -56,11 +68,11 @@ public class Requirement {
         this.note_type = note_type;
     }
 
-    public int getNote() {
+    public Integer getNote() {
         return note;
     }
 
-    public void setNote(int note) {
+    public void setNote(Integer note) {
         this.note = note;
     }
 
