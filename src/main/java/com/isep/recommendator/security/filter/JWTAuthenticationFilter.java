@@ -54,8 +54,6 @@ public class JWTAuthenticationFilter
         UserDetails user = null;
         user = customUserDetailsService.loadUserByUsername(username, password);
 
-
-
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                     username,
                     password,

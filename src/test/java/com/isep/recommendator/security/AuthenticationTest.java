@@ -101,7 +101,7 @@ public class AuthenticationTest {
                 .andExpect(status().is(401))
                 .andExpect(jsonPath("$.token").doesNotExist())
                 .andExpect(jsonPath("$.error", isA(String.class)))
-                .andExpect(jsonPath("$.message").value("username not found")
+                .andExpect(jsonPath("$.message").value("Username not found")
                 );
     }
 }
