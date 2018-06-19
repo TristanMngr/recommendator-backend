@@ -230,9 +230,10 @@ public class SpecialityControllerTest {
         String description = "description de la spe";
 
         Speciality spe = specialityRepository.save(new Speciality(name, description));
-
-        mockMvc.perform(put("/specialities/1")
-                .contentType(contentType))
+        Speciality spe2 = specialityRepository.save(new Speciality(name + 2, description + 2));
+        mockMvc.perform(put("/specialities/"+spe2.getId())
+                .contentType(contentType)
+                .param("name", name))
                 .andExpect(status().isBadRequest());
 
         assertTrue("the spe name shouldn't have been updated", specialityService.getSpeciality(spe.getId()).getName().equals(name));
