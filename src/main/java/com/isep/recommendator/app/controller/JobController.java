@@ -2,7 +2,6 @@ package com.isep.recommendator.app.controller;
 
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.model.Job;
-import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
 import com.isep.recommendator.app.service.JobService;
 import io.swagger.annotations.Api;
@@ -13,10 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
