@@ -28,13 +28,24 @@ public class History {
   private String type;
 
   @NotBlank
-  @Column(unique = true)
+  @Column(length = 1000000)
   private String json;
 
   @ManyToOne
   @JoinColumn(name = "histories")
   @JsonBackReference
   private User user;
+
+  public History(String name, String type, String json, User user){
+    this.name = name;
+    this.type = type;
+    this.json = json;
+    this.user = user;
+  }
+
+  public History(){
+
+  }
 
   public Long getHistory_id() {
     return history_id;

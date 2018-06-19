@@ -98,4 +98,8 @@ public class User implements Serializable {
   public void setHistories(Set<History> histories) {
     this.histories = histories;
   }
+
+  public void addHistory(History history){
+        this.histories.add(history);
+  }
 }
