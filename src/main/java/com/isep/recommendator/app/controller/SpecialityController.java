@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,13 +49,14 @@ public class SpecialityController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created")
     })
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Speciality create(@RequestParam(value = "name") String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
         return specialityService.create(name, description);
     }
 
 
     @GetMapping("/{speciality_id}")
-    @ApiOperation(value = "Get Speciality [ADMIN, USER]", response = Speciality.class)
+    @ApiOperation(value = "Get Speciality", response = Speciality.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK")
     })
@@ -65,9 +67,7 @@ public class SpecialityController {
 
     @DeleteMapping("/{speciality_id}")
     @ApiOperation(value = "Delete Speciality [ADMIN]", response = Speciality.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "remove speciallity")
-    })
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Speciality destroy(@PathVariable("speciality_id") Long specialityId) {
         return this.specialityService.destroy(specialityId);
     }
@@ -102,4 +102,38 @@ public class SpecialityController {
     public Speciality addJob(@PathVariable("speciality_id") Long specialityId, @RequestParam("job_id") Long jobId) {
         return specialityService.addJob(specialityId, jobId);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "Update a speciality [ADMIN]", notes="should be admin", response = Speciality.class)
+    public Speciality updateById(@PathVariable(value = "id") Long id, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "description", required = false) String description) throws BadRequestException {
+        Speciality spe = specialityService.getSpeciality(id);
+        String new_name = name == null ? spe.getName() : name;
+        String new_description = description == null ? spe.getDescription() : description;
+        spe = specialityService.update(spe, new_name, new_description);
+        return spe;
+    }
+
+    @DeleteMapping("/{id}/modules/{module_id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "delete a module from a speciality [ADMIN]", notes="should be admin", response = Speciality.class)
+    public Speciality deleteModuleFromSpeciality(@PathVariable(value = "id") Long id, @PathVariable(value = "module_id") Long module_id) throws BadRequestException {
+        return specialityService.removeModule(id, module_id);
+    }
+
+    @DeleteMapping("/{id}/jobs/{job_id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "delete a job from a speciality [ADMIN]", notes="should be admin", response = Speciality.class)
+    public Speciality deleteJobFromSpeciality(@PathVariable(value = "id") Long id, @PathVariable(value = "job_id") Long job_id) throws BadRequestException {
+        return specialityService.removeJob(id, job_id);
+    }
+
+    @PutMapping("/{id}/modules/{module_id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation(value = "change if a module is main in a spe [ADMIN]", notes="should be admin", response = Speciality.class)
+    public Speciality switchIsMainModule(@PathVariable(value = "id") Long id, @PathVariable(value = "module_id") Long module_id,
+       @RequestParam(value = "is_main", required = false) Boolean is_main) throws BadRequestException {
+        return specialityService.setIsMain(id, module_id, is_main);
+    }
+
 }

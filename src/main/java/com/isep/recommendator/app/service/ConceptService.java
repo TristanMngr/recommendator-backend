@@ -4,6 +4,7 @@ import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
+import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,8 +50,12 @@ public class ConceptService {
     }
 
 
-    public void delete(Concept concept){
+    public Concept delete(Concept concept){
+        for (Module module: concept.getModules()) {
+            module.getConcepts().remove(concept);
+        }
         conceptRepo.delete(concept);
+        return concept;
     }
 
     public Concept update(Concept concept, String new_name) throws BadRequestException{

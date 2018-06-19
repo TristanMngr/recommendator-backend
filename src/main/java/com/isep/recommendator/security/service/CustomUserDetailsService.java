@@ -30,8 +30,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userService.findByUsername(username);
 
         if (user == null)
-
-
             throw new UsernameNotFoundException("username not found");
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();

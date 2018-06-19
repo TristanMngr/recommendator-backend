@@ -1,8 +1,8 @@
 package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.Application;
-import com.isep.recommendator.app.custom_object.SpecialityAndConceptObject;
-import com.isep.recommendator.app.custom_object.SpecialityAndMatchingConceptsObject;
+import com.isep.recommendator.app.custom_object.Form2Response;
+import com.isep.recommendator.app.custom_object.SpeModuleConcept;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.model.Speciality;
@@ -102,13 +102,12 @@ public class FormServiceTest {
     }
 
     @Test
-    public void getSpecialitiesAndMatchingConceptByConceptsIds(){
+    public void repositoryRequest(){
         ArrayList<Long> concept_ids = new ArrayList<>();
         concept_ids.add(concept_one.getId());
         concept_ids.add(concept_two.getId());
 
-        System.out.println(spe_one);
-        List<SpecialityAndConceptObject> resp = specialityRepository.getSpecialitiesAndMatchingConceptByConceptsIds(concept_ids);
+        List<SpeModuleConcept> resp = specialityRepository.getSpeModuleConceptByConceptIds(concept_ids);
 
         assertTrue("should contains 3 elements", resp.size() == 3);
         // check the order of the list
@@ -120,36 +119,84 @@ public class FormServiceTest {
     }
 
     @Test
-    public void getSpecialitiesByConceptsIdsWithMatching(){
+    public void getPartialResponse(){
         ArrayList<Long> concept_ids = new ArrayList<>();
         concept_ids.add(concept_one.getId());
         concept_ids.add(concept_two.getId());
 
-        List<SpecialityAndMatchingConceptsObject> list = formService.getSpecialitiesByConceptsIdsWithMatching(concept_ids);
+        List<Form2Response> list = formService.getPartialResponse(concept_ids);
 
         assertTrue("it should return 2 spe", list.size() == 2);
 
         assertTrue("the first spe should be spe1", list.get(0).getSpeciality().getId() == spe_one.getId());
-        assertTrue("it should have 2 matching concepts", list.get(0).getMatching_concepts().size() == 2);
+        assertTrue("it should have 1 modules", list.get(0).getMatching_modules().size() == 1);
+
+        assertTrue("the module should have 2 concepts", list.get(0).getMatching_modules().get(0).getMatching_concepts().size() == 2);
 
         assertTrue("first concept should be concept one or two",
-                list.get(0).getMatching_concepts().get(0).getId() == concept_one.getId() ||
-                        list.get(0).getMatching_concepts().get(0).getId() ==concept_two.getId()
+                list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId() == concept_one.getId() ||
+                        list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId() ==concept_two.getId()
         );
 
+        assertTrue("matching should be > 100", list.get(0).getMatching() > 0);
+        
         assertTrue("second concept should be concept one or two and different from first",
-                ( list.get(0).getMatching_concepts().get(1).getId() == concept_one.getId() ||
-                        list.get(0).getMatching_concepts().get(1).getId() == concept_two.getId() ) &&
-                        list.get(0).getMatching_concepts().get(1).getId() != list.get(0).getMatching_concepts().get(0).getId()
+                ( list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() == concept_one.getId() ||
+                        list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() == concept_two.getId() ) &&
+                        list.get(0).getMatching_modules().get(0).getMatching_concepts().get(1).getId() != list.get(0).getMatching_modules().get(0).getMatching_concepts().get(0).getId()
         );
+
+
+        System.out.println(list.get(1).getMatching());
+        assertTrue("matching should be 50", list.get(1).getMatching() == 50);
 
         assertTrue("the second spe should be spe2", list.get(1).getSpeciality().getId() == spe_two.getId());
 
         assertTrue("it should have 1 matching concepts",
-                list.get(1).getMatching_concepts().size() == 1 && !list.get(1).getMatching_concepts().isEmpty());
+                list.get(1).getMatching_modules().get(0).getMatching_concepts().size() == 1 && !list.get(1).getMatching_modules().get(0).getMatching_concepts().isEmpty());
 
-        assertTrue("it should be concept2", list.get(1).getMatching_concepts().get(0).getId() == concept_two.getId());
+        assertTrue("it should be concept2", list.get(1).getMatching_modules().get(0).getMatching_concepts().get(0).getId() == concept_two.getId());
 
     }
+
+    @Test
+    public void getForm2(){
+        ArrayList<Long> concept_ids = new ArrayList<>();
+        concept_ids.add(concept_one.getId());
+        concept_ids.add(concept_two.getId());
+
+        List<Form2Response> list = formService.getForm2(concept_ids);
+
+        assertTrue("it should return 3 spe", list.size() == 3);
+        assertTrue("last spe should be spe 3", list.get(2).getSpeciality().getId() == spe_three.getId());
+        assertTrue("it shouldn't contain any matching modules", list.get(2).getMatching_modules().size() == 0);
+        assertTrue("last spe matching should be 0", list.get(2).getMatching() == 0);
+
+        assertTrue("all three specialities should be differents",
+                list.get(0).getSpeciality().getId() != list.get(1).getSpeciality().getId() &&
+                        list.get(1).getSpeciality().getId() != list.get(2).getSpeciality().getId() &&
+                        list.get(2).getSpeciality().getId() != list.get(0).getSpeciality().getId()
+        );
+    }
+
+    @Test
+    public void getForm2_empty(){
+        ArrayList<Long> concept_ids = new ArrayList<>();
+        concept_ids.add(420000L);
+
+        List<Form2Response> list = formService.getForm2(concept_ids);
+
+        assertTrue("it should return 3 spe", list.size() == 3);
+
+        assertTrue("all three specialities should be differents",
+                list.get(0).getSpeciality().getId() != list.get(1).getSpeciality().getId() &&
+                        list.get(1).getSpeciality().getId() != list.get(2).getSpeciality().getId() &&
+                        list.get(2).getSpeciality().getId() != list.get(0).getSpeciality().getId()
+        );
+        assertTrue("spe 1 shouldn't contain any matching modules", list.get(0).getMatching_modules().size() == 0);
+        assertTrue("spe 2 shouldn't contain any matching modules", list.get(1).getMatching_modules().size() == 0);
+        assertTrue("spe 3 shouldn't contain any matching modules", list.get(2).getMatching_modules().size() == 0);
+    }
+
 
 }

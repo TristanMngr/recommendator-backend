@@ -1,9 +1,10 @@
 package com.isep.recommendator.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isep.recommendator.app.custom_object.TokenResponseObject;
 import com.isep.recommendator.security.config.TokenProperties;
-import com.isep.recommendator.security.service.CustomUserDetailsService;
 import com.isep.recommendator.security.handler.JWTAuthenticationFailureHandler;
+import com.isep.recommendator.security.service.CustomUserDetailsService;
 import com.isep.recommendator.security.service.TokenService;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Configurable
 @EnableConfigurationProperties(TokenProperties.class)
@@ -82,7 +82,7 @@ public class JWTAuthenticationFilter
         res.setCharacterEncoding("UTF-8");
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 
-        HashMap<String, Object> respObject = tokenService.getSuccessResponse(token);
+        TokenResponseObject respObject = tokenService.getSuccessResponse(token);
         String resp = new ObjectMapper().writeValueAsString(respObject);
 
         res.getWriter().println(resp);

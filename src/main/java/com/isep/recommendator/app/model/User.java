@@ -1,6 +1,9 @@
 package com.isep.recommendator.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
@@ -13,17 +16,20 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public String name;
-    public String lastName;
-    public String firstName;
+    private String lastName;
+    private String firstName;
     private String employeeType;
     private String employeeNumber;
-    public String email;
+
+    @Email
+    private String email;
 
     @NotBlank
     @Column(unique = true)
     private String username;
 
     @NotBlank
+    @JsonIgnore
     private String password;
 
     private boolean isAdmin;

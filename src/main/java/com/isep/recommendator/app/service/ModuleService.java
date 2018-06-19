@@ -1,11 +1,13 @@
 package com.isep.recommendator.app.service;
 
+import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
 import com.isep.recommendator.app.model.Concept;
 import com.isep.recommendator.app.model.Module;
 import com.isep.recommendator.app.repository.ConceptRepository;
 import com.isep.recommendator.app.repository.ModuleRepository;
+import com.isep.recommendator.app.repository.SpecialityModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +19,15 @@ import java.util.Optional;
 @Service
 public class ModuleService {
 
-    private final ModuleRepository moduleRepo;
-    private final ConceptRepository conceptRepo;
+    private final ModuleRepository           moduleRepo;
+    private final ConceptRepository          conceptRepo;
+    private final SpecialityModuleRepository specialityModuleRepository;
 
     @Autowired
-    public ModuleService(ModuleRepository moduleRepo, ConceptRepository conceptRepo){
+    public ModuleService(ModuleRepository moduleRepo, ConceptRepository conceptRepo, SpecialityModuleRepository specialityModuleRepository){
         this.moduleRepo = moduleRepo;
         this.conceptRepo = conceptRepo;
+        this.specialityModuleRepository = specialityModuleRepository;
     }
 
     public Module get(Long id){
@@ -44,6 +48,15 @@ public class ModuleService {
         return moduleRepo.save(module);
     }
 
+    public Module removeConcept(Module module, Concept concept) throws BadRequestException {
+        if (!module.getConcepts().contains(concept))
+            throw new BadRequestException("concept with id "+ concept.getId() + " isn't in module with id " + module.getId());
+
+        concept.getModules().remove(module);
+        module.getConcepts().remove(concept);
+        return moduleRepo.save(module);
+    }
+
     public Module create(String name, String description){
         try {
             @Valid Module user = new Module(name, description);
@@ -52,6 +65,33 @@ public class ModuleService {
         } catch (ConstraintViolationException e){
             throw new CustomValidationException(e);
         }
+    }
+
+    public Module delete(Module module){
+        // du coup j'ai fait une query j'avais trop de galère à le faire de manière classique
+        // mais je pense que c'est pas plus mal, on boucle pas comme ça
+        specialityModuleRepository.deleteSpecialityModuleByModuleId(module.getId());
+
+        for (Concept concept : module.getConcepts()) {
+            concept.getModules().remove(module);
+        }
+
+        moduleRepo.delete(module);
+
+        return module;
+    }
+
+    public Module update(Module module, String new_name, String new_desc) throws BadRequestException{
+        if (!moduleRepo.findByName(new_name).isEmpty()){
+            throw new BadRequestException("module with name " + new_name + " already exist");
+            }
+
+        if (!module.getName().equals(new_name))
+            module.setName(new_name);
+        if (!module.getDescription().equals(new_desc))
+            module.setDescription(new_desc);
+
+        return moduleRepo.save(module);
     }
 
 }

@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="speciality")
+@Table(name = "speciality")
 public class Speciality {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +20,11 @@ public class Speciality {
 
     private String description;
 
-    @ManyToMany(mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "specialities", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Job> jobs = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "speciality", cascade = CascadeType.ALL)
-    private Set<SpecialityModule> specialityModules = new HashSet<SpecialityModule>();
+    private Set<SpecialityModule> specialityModules = new HashSet<>();
 
     public Speciality() {
     }
@@ -34,12 +34,12 @@ public class Speciality {
         this.description = description;
     }
 
-    public void setJobs(Set<Job> jobs) {
-        this.jobs = jobs;
-    }
-
     public Set<Job> getJobs() {
         return jobs;
+    }
+
+    public void setJobs(Set<Job> jobs) {
+        this.jobs = jobs;
     }
 
     public Set<SpecialityModule> getSpecialityModules() {
