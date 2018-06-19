@@ -6,13 +6,14 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     private Long user_id;
 
     private static final long serialVersionUID = 1L;
@@ -34,6 +35,9 @@ public class User implements Serializable {
     private String password;
 
     private boolean isAdmin;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    private Set<History> histories = new HashSet<>();
 
     public User(){
     }
@@ -86,4 +90,12 @@ public class User implements Serializable {
     public void setId(Long user_id) {
         this.user_id = user_id;
     }
+
+  public Set<History> getHistories() {
+    return histories;
+  }
+
+  public void setHistories(Set<History> histories) {
+    this.histories = histories;
+  }
 }

@@ -32,7 +32,7 @@ public class History {
   private String json;
 
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "histories")
   @JsonBackReference
   private User user;
 

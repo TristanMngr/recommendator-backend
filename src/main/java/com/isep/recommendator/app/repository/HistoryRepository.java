@@ -11,9 +11,10 @@ import java.util.List;
 
 public interface HistoryRepository extends JpaRepository<History, Long> {
 
-  @Query
+  /*@Query("SELECT m FROM  m JOIN m.specialityModules sm JOIN sm.speciality s WHERE s.speciality_id IN (:specialitiesIds)")
+  @Query("SELECT h FROM h JOIN h.")
   List<History> getAllByUser(@Param("user_id") Long user_id);
 
-  @Query
-  History getByUser(@Param("user_id") Long user_id, @Param("history_id") Long history_id);
+  @Query("SELECT h FROM h JOIN ")
+  History getByUser(@Param("user_id") Long user_id, @Param("history_id") Long history_id);*/
 }

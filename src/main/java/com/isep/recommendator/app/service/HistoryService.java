@@ -26,11 +26,11 @@ public class HistoryService {
   }
 
   public History getByUser(Long user_id, Long history_id){
-    return historyRepo.getByUser(user_id, history_id);
+    return userRepo.getHistoryByUser(user_id, history_id);
   }
 
   public List<History> getAllByUser(Long user_id){
-    return historyRepo.getAllByUser(user_id);
+    return userRepo.getAllHistoriesByUser(user_id);
   }
 
 
