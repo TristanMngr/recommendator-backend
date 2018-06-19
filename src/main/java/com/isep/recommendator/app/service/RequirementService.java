@@ -63,6 +63,28 @@ public class RequirementService {
         return requirement;
     }
 
+    public Requirement update(Long requirement_id, String noteType, Integer note, String mooc, String question) throws BadRequestException {
+        Requirement requirement = requirementFound(requirement_id);
+
+        String newNoteType = noteType == null ? requirement.getNoteType() : noteType;
+        Integer newNote = note == null ? requirement.getNote() : note;
+        String newMooc = mooc == null ? requirement.getMooc() : mooc;
+        String newQuestion = question == null ? requirement.getQuestion() : question;
+
+        try {
+            checkNotation(newNoteType, newNote);
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
+        }
+        requirement.setNoteType(newNoteType);
+        requirement.setNote(newNote);
+        requirement.setMooc(newMooc);
+        requirement.setQuestion(newQuestion);
+
+        requirementRepository.save(requirement);
+        return requirement;
+    }
+
     public Requirement requirementFound(Long requirementId) throws ResourceNotFoundException {
         Optional<Requirement> requirement = requirementRepository.findById(requirementId);
 

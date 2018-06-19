@@ -16,7 +16,7 @@ public class Requirement {
     private Concept concept;
 
     @NotBlank
-    private String note_type;
+    private String noteType;
 
     @NotNull
     private Integer note;
@@ -25,9 +25,9 @@ public class Requirement {
 
     private String question;
 
-    public Requirement(@NotBlank Concept concept, @NotBlank String note_type, @NotNull Integer note, String mooc, String question) {
+    public Requirement(@NotBlank Concept concept, @NotBlank String noteType, @NotNull Integer note, String mooc, String question) {
         this.concept = concept;
-        this.note_type = note_type;
+        this.noteType = noteType;
         this.note = note;
         this.mooc = mooc;
         this.question = question;
@@ -36,16 +36,12 @@ public class Requirement {
     public Requirement() {
     }
 
-    public String getMooc() {
-        return mooc;
-    }
-
-    public void setMooc(String mooc) {
-        this.mooc = mooc;
-    }
-
     public Long getRequirement_id() {
         return requirement_id;
+    }
+
+    public void setRequirement_id(Long requirement_id) {
+        this.requirement_id = requirement_id;
     }
 
     public Concept getConcept() {
@@ -56,16 +52,12 @@ public class Requirement {
         this.concept = concept;
     }
 
-    public void setRequirement_id(Long requirement_id) {
-        this.requirement_id = requirement_id;
+    public String getNoteType() {
+        return noteType;
     }
 
-    public String getNote_type() {
-        return note_type;
-    }
-
-    public void setNote_type(String note_type) {
-        this.note_type = note_type;
+    public void setNoteType(String noteType) {
+        this.noteType = noteType;
     }
 
     public Integer getNote() {
@@ -74,6 +66,14 @@ public class Requirement {
 
     public void setNote(Integer note) {
         this.note = note;
+    }
+
+    public String getMooc() {
+        return mooc;
+    }
+
+    public void setMooc(String mooc) {
+        this.mooc = mooc;
     }
 
     public String getQuestion() {

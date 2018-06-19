@@ -57,4 +57,8 @@ public class Concept {
     public Set<Module> getModules() {
         return modules;
     }
+
+    public Set<Requirement> getRequirements() {
+        return requirements;
+    }
 }
