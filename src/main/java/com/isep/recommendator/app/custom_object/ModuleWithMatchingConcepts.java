@@ -17,6 +17,11 @@ public class ModuleWithMatchingConcepts {
         this.matching_concepts.add(c);
     }
 
+    public ModuleWithMatchingConcepts(Module module, List<Concept> concepts){
+        this.module = module;
+        this.matching_concepts = concepts;
+    }
+
     public Module getModule() {
         return module;
     }
