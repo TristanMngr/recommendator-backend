@@ -134,13 +134,13 @@ crashlytics-build.properties
 fabric.properties
 
 ### Intellij Patch ###
+# *.ipr
+
+recommendator.iml
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
 
 # modules.xml
 .idea/misc.xml
-# *.ipr
-
-recommendator.iml
 
 # Sonarlint plugin
 .idea/sonarlint
