@@ -27,6 +27,10 @@ public class Concept {
     @JsonBackReference
     private Set<Module> modules = new HashSet<>();
 
+    @OneToMany(mappedBy = "concept", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JsonBackReference
+    private Set<Requirement> requirements = new HashSet<>();
+
     public Concept() {
     }
 
@@ -52,5 +56,9 @@ public class Concept {
 
     public Set<Module> getModules() {
         return modules;
+    }
+
+    public Set<Requirement> getRequirements() {
+        return requirements;
     }
 }

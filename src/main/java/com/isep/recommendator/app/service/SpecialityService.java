@@ -1,6 +1,7 @@
 package com.isep.recommendator.app.service;
 
 import com.isep.recommendator.app.custom_object.Form2Response;
+import com.isep.recommendator.app.custom_object.ModuleWithMatchingConcepts;
 import com.isep.recommendator.app.handler.BadRequestException;
 import com.isep.recommendator.app.handler.CustomValidationException;
 import com.isep.recommendator.app.handler.ResourceNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -171,16 +173,38 @@ public class SpecialityService {
     }
 
     public int getMaxScore(Speciality speciality){
-        int score = specialityRepository.getMaxScore(speciality.getId());
+        int score = 0;
+        for (SpecialityModule spemod : speciality.getSpecialityModules()) {
+            if (spemod.isMainModule())
+                score += 2 * spemod.getModule().getConcepts().size();
+            else
+                score += spemod.getModule().getConcepts().size();
+        }
+        return score;
+    }
+
+    // TODO faire un truc un peu plus opti qu'une double boucle ?
+    public Double getScore(Speciality speciality, Map<Long, ModuleWithMatchingConcepts> modules){
+        Double score = 0.0;
+        for (Map.Entry<Long, ModuleWithMatchingConcepts> mod : modules.entrySet()) {
+            for (SpecialityModule spemod : speciality.getSpecialityModules()) {
+                if (mod.getValue().getModule().getId() == spemod.getModule().getId()){
+                    if (spemod.isMainModule())
+                        score += 2 * mod.getValue().getMatching_concepts().size();
+                    else
+                        score += mod.getValue().getMatching_concepts().size();
+                }
+            }
+        }
         return score;
     }
 
     public Speciality update(Speciality speciality, String new_name, String new_desc) throws BadRequestException{
-        if (specialityRepository.findByName(new_name) != null)
-            throw new BadRequestException("speciality with name " + new_name + " already exist");
-
-        if (!speciality.getName().equals(new_name))
+        if (!speciality.getName().equals(new_name)) {
+            if (specialityRepository.findByName(new_name) != null)
+                throw new BadRequestException("speciality with name " + new_name + " already exist");
             speciality.setName(new_name);
+        }
         if (!speciality.getDescription().equals(new_desc))
             speciality.setDescription(new_desc);
 

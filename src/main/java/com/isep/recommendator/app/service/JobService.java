@@ -80,4 +80,16 @@ public class JobService {
 
         return job.get();
     }
+
+    public Job update(Job job, String new_name, String new_desc) throws BadRequestException{
+        if (!job.getName().equals(new_name)) {
+            if (!jobRepository.findListByName(new_name).isEmpty())
+                throw new BadRequestException("job with name " + new_name + " already exist");
+            job.setName(new_name);
+        }
+        if (!job.getDescription().equals(new_desc))
+            job.setDescription(new_desc);
+
+        return jobRepository.save(job);
+    }
 }
