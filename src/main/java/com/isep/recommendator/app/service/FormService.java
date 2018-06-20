@@ -1,10 +1,16 @@
 package com.isep.recommendator.app.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isep.recommendator.app.custom_object.Form2Response;
 import com.isep.recommendator.app.custom_object.ModuleWithMatchingConcepts;
 import com.isep.recommendator.app.custom_object.SpeModuleConcept;
+import com.isep.recommendator.app.model.History;
 import com.isep.recommendator.app.model.Speciality;
+import com.isep.recommendator.app.model.User;
+import com.isep.recommendator.app.repository.HistoryRepository;
 import com.isep.recommendator.app.repository.SpecialityRepository;
+import com.isep.recommendator.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +23,10 @@ public class FormService extends Utils<Form2Response> {
     SpecialityRepository specialityRepo;
     @Autowired
     SpecialityService specialityService;
+    @Autowired
+    HistoryRepository historyRepository;
+    @Autowired
+    UserRepository userRepository;
 
 
     public List<Form2Response> getForm2(List<Long> concept_ids){
@@ -96,4 +106,17 @@ public class FormService extends Utils<Form2Response> {
         return spe_ids;
     }
 
+    public void saveHistory(User user, List<Form2Response> resp) throws JsonProcessingException {
+        String name = "Historique du " + new Date();
+        String json = this.listToJson(resp);
+        History history = new History(name, "form2", json, user);
+        historyRepository.save(history);
+        user.addHistory(history);
+        userRepository.save(user);
+    }
+
+    private String listToJson(List<?> list) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(list);
+    }
 }

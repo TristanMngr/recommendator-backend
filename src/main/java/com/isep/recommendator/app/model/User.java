@@ -6,16 +6,17 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
 public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+    public  String name;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
-
-    private static final long serialVersionUID = 1L;
-    public String name;
     private String lastName;
     private String firstName;
     private String employeeType;
@@ -34,11 +35,13 @@ public class User implements Serializable {
 
     private boolean isAdmin;
 
-    public User(){
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    private Set<History> histories = new HashSet<>();
+
+    public User() {
     }
 
-    public User(String username, String password, String name, String lastName, String firstName, String type, String numero, String email)
-    {
+    public User(String username, String password, String name, String lastName, String firstName, String type, String numero, String email) {
         this.name = name;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -56,9 +59,7 @@ public class User implements Serializable {
     }
 
 
-
-    public String toString()
-    {
+    public String toString() {
         return "username = " + username + " name = " + name + " type = " + employeeType + " id = " + employeeNumber;
     }
 
@@ -86,7 +87,20 @@ public class User implements Serializable {
         this.user_id = user_id;
     }
 
+    public Set<History> getHistories() {
+        return histories;
+    }
+
+    public void setHistories(Set<History> histories) {
+        this.histories = histories;
+    }
+
+    public void addHistory(History history) {
+        this.histories.add(history);
+    }
+
     public String getEmployeeType() {
         return employeeType;
     }
+
 }
